@@ -13,67 +13,67 @@ html,body{height:100%;background:#0f0f0f;font-family:-apple-system,BlinkMacSyste
 body{overscroll-behavior:none}
 input,textarea,button,select{font-family:inherit;-webkit-appearance:none;appearance:none}
 #splash{position:fixed;inset:0;background:#0f0f0f;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;gap:12px}
-#splash h1{font-size:28px;font-weight:700;color:#f5a623}
-#splash p{font-size:13px;color:#555}
+#splash h1{font-size:32px;font-weight:700;color:#f5a623}
+#splash p{font-size:16px;color:#999}
 #splash-form{display:flex;flex-direction:column;gap:10px;width:280px;margin-top:16px}
-#splash-form select{padding:12px 14px;border-radius:10px;border:1px solid #2a2a2a;background:#1a1a1a;color:#f0f0ee;font-size:14px;outline:none}
-#splash-form button{padding:13px;border-radius:10px;border:none;background:#f5a623;color:#0f0f0f;font-size:14px;font-weight:700;cursor:pointer}
-.err{font-size:11px;color:#e74c3c;text-align:center}
+#splash-form select{padding:12px 14px;border-radius:10px;border:1px solid #2a2a2a;background:#1a1a1a;color:#f0f0ee;font-size:17px;outline:none}
+#splash-form button{padding:13px;border-radius:10px;border:none;background:#f5a623;color:#0f0f0f;font-size:17px;font-weight:700;cursor:pointer}
+.err{font-size:17px;color:#e74c3c;text-align:center}
 #header{position:sticky;top:0;z-index:10;background:#0f0f0f;border-bottom:1px solid #1e1e1e}
 #topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 8px}
-#whoami{font-size:13px;font-weight:600;color:#f5a623}
-.hbtn{font-size:11px;color:#444;cursor:pointer;padding:4px 8px;border:1px solid #222;border-radius:6px;background:transparent}
+#whoami{font-size:16px;font-weight:600;color:#f5a623}
+.hbtn{font-size:17px;color:#888;cursor:pointer;padding:4px 8px;border:1px solid #222;border-radius:6px;background:transparent}
 #tabs{display:flex;border-top:1px solid #1e1e1e;overflow-x:auto}
-.tab{flex:1;min-width:50px;padding:10px 2px;border:none;background:transparent;font-size:10px;font-weight:500;cursor:pointer;text-transform:uppercase;letter-spacing:0.05em;color:#444;border-bottom:2px solid transparent;white-space:nowrap}
+.tab{flex:1;min-width:50px;padding:10px 2px;border:none;background:transparent;font-size:16px;font-weight:500;cursor:pointer;text-transform:uppercase;letter-spacing:0.05em;color:#888;border-bottom:2px solid transparent;white-space:nowrap}
 .tab.active{color:#f5a623;border-bottom-color:#f5a623}
 #content{overflow-y:auto;-webkit-overflow-scrolling:touch;height:calc(100vh - 88px)}
 .card{margin:10px 12px;background:#1a1a1a;border:1px solid #222;border-radius:12px;overflow:hidden}
 .card-head{padding:10px 14px;background:#141414;border-bottom:1px solid #222}
-.card-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:#666}
-.card-sub{font-size:12px;font-weight:500;color:#f0f0ee;margin-top:2px}
+.card-title{font-size:16px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:#aaa}
+.card-sub{font-size:15px;font-weight:500;color:#f0f0ee;margin-top:2px}
 .fg{padding:10px 14px;border-bottom:1px solid #1e1e1e}
-.fl{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px}
-.fi{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:13px;outline:none}
+.fl{font-size:16px;color:#999;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px}
+.fi{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:16px;outline:none}
 .fi:focus{border-color:#f5a623}
-.fs{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:13px;outline:none}
-.btn{width:calc(100% - 24px);margin:12px;padding:13px;border-radius:10px;border:none;background:#f5a623;color:#0f0f0f;font-size:13px;font-weight:700;cursor:pointer}
+.fs{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:16px;outline:none}
+.btn{width:calc(100% - 24px);margin:12px;padding:13px;border-radius:10px;border:none;background:#f5a623;color:#0f0f0f;font-size:16px;font-weight:700;cursor:pointer}
 .btn.sec{background:#1e1e1e;color:#f5a623;border:1px solid #333}
 .btn.red{background:#2a1010;color:#e74c3c;border:1px solid #3a1a1a}
 .sg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:12px}
 .sb{background:#141414;border:1px solid #1e1e1e;border-radius:10px;padding:10px 6px;text-align:center}
-.sl{font-size:9px;color:#555;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px}
-.sv{font-size:20px;font-weight:700;color:#f0f0ee}
+.sl{font-size:15px;color:#999;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px}
+.sv{font-size:24px;font-weight:700;color:#f0f0ee}
 .sv.g{color:#f5a623}
-.lr{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #1a1a1a}
+.lr{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid #1a1a1a}
 .lr:last-child{border-bottom:none}
-.ln{font-size:13px;font-weight:500;flex:1}
-.lv{font-size:12px;color:#f5a623;font-weight:600}
-.ls{font-size:10px;color:#555}
-.rk{width:20px;font-size:11px;color:#444;font-weight:600}
+.ln{font-size:16px;font-weight:500;flex:1}
+.lv{font-size:15px;color:#f5a623;font-weight:600}
+.ls{font-size:16px;color:#999}
+.rk{width:20px;font-size:17px;color:#888;font-weight:600}
 .bw{height:6px;background:#1a1a1a;border-radius:3px;overflow:hidden;margin:4px 0 2px}
 .bf{height:100%;border-radius:3px;background:#f5a623}
-.ar{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid #1a1a1a}
-.at{font-size:12px;flex:1}
-.ap{font-size:12px;color:#f5a623;font-weight:600;min-width:50px;text-align:right}
-.ad{font-size:10px;color:#444}
-.db{width:24px;height:24px;border:none;background:transparent;color:#333;cursor:pointer;font-size:18px;flex-shrink:0;padding:0;display:flex;align-items:center;justify-content:center}
+.ar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid #1a1a1a}
+.at{font-size:15px;flex:1}
+.ap{font-size:15px;color:#f5a623;font-weight:600;min-width:50px;text-align:right}
+.ad{font-size:16px;color:#888}
+.db{width:24px;height:24px;border:none;background:transparent;color:#888;cursor:pointer;font-size:18px;flex-shrink:0;padding:0;display:flex;align-items:center;justify-content:center}
 .cr{margin:0 12px 4px;padding:14px;background:#141414;border:1px solid #2a2a2a;border-radius:10px;text-align:center}
-.ca{font-size:26px;font-weight:700;color:#f5a623}
-.cn{font-size:11px;color:#555;margin-top:3px}
-.cn2{font-size:10px;color:#f5a623;margin-top:2px}
-.gn{font-size:10px;color:#f5a623;padding:4px 14px 8px;background:#1a1a0a}
-.ld{padding:40px;text-align:center;color:#333;font-size:13px}
-.ms{padding:8px 12px;background:#1a2a1a;border-radius:8px;font-size:12px;color:#4caf50;margin:8px 12px;text-align:center}
+.ca{font-size:30px;font-weight:700;color:#f5a623}
+.cn{font-size:17px;color:#999;margin-top:3px}
+.cn2{font-size:16px;color:#f5a623;margin-top:2px}
+.gn{font-size:16px;color:#f5a623;padding:4px 14px 8px;background:#1a1a0a}
+.ld{padding:40px;text-align:center;color:#888;font-size:16px}
+.ms{padding:8px 12px;background:#1a2a1a;border-radius:8px;font-size:15px;color:#4caf50;margin:8px 12px;text-align:center}
 .ms.er{background:#2a1a1a;color:#e74c3c}
 .cw{padding:12px 14px}
 .cbr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.cnm{font-size:11px;color:#666;min-width:62px;text-align:right}
+.cnm{font-size:17px;color:#aaa;min-width:62px;text-align:right}
 .cbb{flex:1;height:20px;background:#1a1a1a;border-radius:4px;overflow:hidden}
-.cbi{height:100%;border-radius:4px;background:#f5a623;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:9px;color:#0f0f0f;font-weight:700;min-width:4px}
-.sec-lbl{padding:10px 14px 0;font-size:9px;color:#444;text-transform:uppercase;letter-spacing:0.07em}
-.emp{padding:24px;text-align:center;font-size:12px;color:#333}
-.adrow{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #1a1a1a}
-.adrow input{flex:1;padding:5px 8px;border-radius:6px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:12px;outline:none}
+.cbi{height:100%;border-radius:4px;background:#f5a623;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:15px;color:#0f0f0f;font-weight:700;min-width:4px}
+.sec-lbl{padding:10px 14px 0;font-size:15px;color:#888;text-transform:uppercase;letter-spacing:0.07em}
+.emp{padding:24px;text-align:center;font-size:15px;color:#888}
+.adrow{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid #1a1a1a}
+.adrow input{flex:1;padding:5px 8px;border-radius:6px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:15px;outline:none}
 </style>
 </head>
 <body>
@@ -265,7 +265,7 @@ function loadTodayActs(){
     var el=document.getElementById("act-list");if(!el)return;
     if(!rows||!rows.length){el.innerHTML='<div class="emp">Nothing logged today.</div>';return;}
     var total=rows.reduce(function(a,r){return a+(r.points||0);},0);
-    var h='<div class="lr"><span class="ln" style="color:#555">Total today</span><span class="lv">'+total+' pts</span></div>';
+    var h='<div class="lr"><span class="ln" style="color:#999">Total today</span><span class="lv">'+total+' pts</span></div>';
     rows.forEach(function(r){
       h+='<div class="ar"><div style="flex:1"><div class="at">'+esc(r.activity_type)+'</div><div class="ad">'+fmtD(r.activity_date)+'</div></div>'
         +'<span class="ap">'+r.points+' pts</span>'
@@ -342,7 +342,7 @@ function loadMySales(){
     var el=document.getElementById("sale-list");if(!el)return;
     if(!rows||!rows.length){el.innerHTML='<div class="emp">No sales yet.</div>';return;}
     var total=rows.reduce(function(a,r){return a+(r.commission||0);},0);
-    var h='<div class="lr"><span class="ln" style="color:#555">Total FYC</span><span class="lv">'+fmtM(total)+'</span></div>';
+    var h='<div class="lr"><span class="ln" style="color:#999">Total FYC</span><span class="lv">'+fmtM(total)+'</span></div>';
     rows.forEach(function(r){
       h+='<div class="ar"><div style="flex:1"><div class="at">'+esc(r.pdt)+' - '+esc(r.pdt_type)+'</div>'
         +'<div class="ad">'+fmtM(r.premium)+' - '+r.tenure+'yr - '+fmtD(r.sale_date)+'</div></div>'
@@ -386,7 +386,7 @@ function renderDash(){
         +'<div class="cbb"><div class="cbi" style="width:'+pct+'%">'+fmtM(fyc[a.id]||0)+'</div></div></div>';
       h+='<div style="display:flex;align-items:center;gap:8px;padding:0 0 4px 70px">'
         +'<div class="bw" style="flex:1;margin:0"><div class="bf" style="width:'+gp+'%;background:#2a4a1a"></div></div>'
-        +'<span style="font-size:9px;color:#444;min-width:38px">'+gp+'% goal</span></div>';
+        +'<span style="font-size:15px;color:#888;min-width:38px">'+gp+'% goal</span></div>';
     });
     h+='</div></div>';
 
@@ -412,16 +412,16 @@ function buildNudgeList(assocs,ptd){
     var nudge=nudges[t]&&nudges[t][a.id];
     var statHtml,btnHtml="";
     if(logged){
-      statHtml='<span style="font-size:11px;color:#4caf50;font-weight:600">Logged</span>';
+      statHtml='<span style="font-size:17px;color:#4caf50;font-weight:600">Logged</span>';
     } else if(nudge){
-      statHtml='<span style="font-size:11px;color:#f5a623">Nudged '+nudge.time+'</span>';
+      statHtml='<span style="font-size:17px;color:#f5a623">Nudged '+nudge.time+'</span>';
       if(a.id!==curUser.id){
-        btnHtml='<button data-aid="'+esc(a.id)+'" data-aname="'+esc(a.name)+'" data-aphone="'+esc(a.phone||"")+'" data-again="1" onclick="doNudge(this)" style="padding:4px 8px;border:1px solid #333;border-radius:6px;background:transparent;color:#555;font-size:10px;cursor:pointer">Again</button>';
+        btnHtml='<button data-aid="'+esc(a.id)+'" data-aname="'+esc(a.name)+'" data-aphone="'+esc(a.phone||"")+'" data-again="1" onclick="doNudge(this)" style="padding:4px 8px;border:1px solid #333;border-radius:6px;background:transparent;color:#999;font-size:16px;cursor:pointer">Again</button>';
       }
     } else {
-      statHtml='<span style="font-size:11px;color:#e74c3c">Not logged</span>';
+      statHtml='<span style="font-size:17px;color:#e74c3c">Not logged</span>';
       if(a.id!==curUser.id){
-        btnHtml='<button data-aid="'+esc(a.id)+'" data-aname="'+esc(a.name)+'" data-aphone="'+esc(a.phone||"")+'" data-again="0" onclick="doNudge(this)" style="padding:4px 10px;border:1px solid #f5a623;border-radius:6px;background:transparent;color:#f5a623;font-size:10px;cursor:pointer;font-weight:600">Nudge</button>';
+        btnHtml='<button data-aid="'+esc(a.id)+'" data-aname="'+esc(a.name)+'" data-aphone="'+esc(a.phone||"")+'" data-again="0" onclick="doNudge(this)" style="padding:4px 10px;border:1px solid #f5a623;border-radius:6px;background:transparent;color:#f5a623;font-size:16px;cursor:pointer;font-weight:600">Nudge</button>';
       }
     }
     h+='<div class="lr"><div class="ln">'+esc(a.name)+'</div><div style="display:flex;align-items:center;gap:8px">'+statHtml+btnHtml+'</div></div>';
@@ -456,7 +456,7 @@ function renderMine(){
       +'<div class="sb"><div class="sl">Target</div><div class="sv">'+fmtM(me.target||0)+'</div></div>'
       +'<div class="sb"><div class="sl">Achieved</div><div class="sv">'+gp+'%</div></div></div>';
     h+='<div style="padding:0 12px 10px"><div class="bw" style="height:10px"><div class="bf" style="width:'+gp+'%"></div></div>'
-      +'<div style="font-size:10px;color:#444;margin-top:3px">'+fmtM(totF)+' of '+fmtM(me.target||0)+'</div></div>';
+      +'<div style="font-size:16px;color:#888;margin-top:3px">'+fmtM(totF)+' of '+fmtM(me.target||0)+'</div></div>';
     h+='<div class="sg"><div class="sb"><div class="sl">Pts</div><div class="sv">'+totP+'</div></div>'
       +'<div class="sb"><div class="sl">Sales</div><div class="sv">'+sales.length+'</div></div>'
       +'<div class="sb"><div class="sl">Acts</div><div class="sv">'+acts.length+'</div></div></div>';
@@ -473,7 +473,7 @@ function renderMine(){
 
 // ADMIN
 function renderAdmin(){
-  var h='<div style="padding:10px 12px 4px;font-size:11px;color:#666">Manage associates, rates and activities.</div>';
+  var h='<div style="padding:10px 12px 4px;font-size:17px;color:#aaa">Manage associates, rates and activities.</div>';
   h+='<div class="sec-lbl">Associates</div><div class="card" id="assoc-list"><div class="ld">Loading...</div></div>';
   h+='<div class="card" style="margin:6px 12px"><div class="card-head"><div class="card-title">Add Associate</div></div>';
   h+='<div class="fg"><div class="fl">Name</div><input class="fi" id="new-name" placeholder="Full name"/></div>';
@@ -485,8 +485,8 @@ function renderAdmin(){
   Object.keys(rates).sort().forEach(function(pdt){
     var r=rates[pdt];
     if(r.flat!==undefined){
-      h+='<div class="adrow"><span style="font-size:11px;color:#666;min-width:120px">'+esc(pdt)+(r.gst?' (GST)':'')+'</span>'
-        +'<input type="number" step="0.01" value="'+r.flat+'" data-pdt="'+esc(pdt)+'" data-type="flat" onchange="updRate(this)"/><span style="font-size:10px;color:#444">%</span></div>';
+      h+='<div class="adrow"><span style="font-size:17px;color:#aaa;min-width:120px">'+esc(pdt)+(r.gst?' (GST)':'')+'</span>'
+        +'<input type="number" step="0.01" value="'+r.flat+'" data-pdt="'+esc(pdt)+'" data-type="flat" onchange="updRate(this)"/><span style="font-size:16px;color:#888">%</span></div>';
     }
   });
   h+='</div><button class="btn sec" onclick="addPdt()">+ Add Product/Rate</button>';
@@ -505,20 +505,20 @@ function loadAdminAssocs(){
     var h="";
     function row(a,isActive){
       return '<div class="adrow" style="flex-wrap:wrap;gap:6px;padding:10px 12px;'+(isActive?"":"opacity:0.5")+'">'
-        +'<div style="flex:1;min-width:80px"><div style="font-size:12px;font-weight:500;color:'+(isActive?"#f0f0ee":"#666")+'">'+esc(a.name)+'</div><div style="font-size:10px;color:#555">'+esc(a.id)+'</div></div>'
+        +'<div style="flex:1;min-width:80px"><div style="font-size:15px;font-weight:500;color:'+(isActive?"#f0f0ee":"#666")+'">'+esc(a.name)+'</div><div style="font-size:16px;color:#999">'+esc(a.id)+'</div></div>'
         +(isActive
           ?'<div style="display:flex;flex-direction:column;gap:3px;min-width:130px">'
-          +'<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:#555;min-width:40px">Target</span>'
-          +'<input type="number" value="'+(a.target||0)+'" data-aid="'+a.id+'" data-f="target" onchange="updAssoc(this)" style="flex:1;padding:4px;border-radius:5px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:11px;outline:none"/></div>'
-          +'<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:#555;min-width:40px">Phone</span>'
-          +'<input value="'+esc(a.phone||"")+'" data-aid="'+a.id+'" data-f="phone" onchange="updAssoc(this)" placeholder="6591234567" style="flex:1;padding:4px;border-radius:5px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:11px;outline:none"/></div>'
+          +'<div style="display:flex;align-items:center;gap:4px"><span style="font-size:16px;color:#999;min-width:40px">Target</span>'
+          +'<input type="number" value="'+(a.target||0)+'" data-aid="'+a.id+'" data-f="target" onchange="updAssoc(this)" style="flex:1;padding:4px;border-radius:5px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:17px;outline:none"/></div>'
+          +'<div style="display:flex;align-items:center;gap:4px"><span style="font-size:16px;color:#999;min-width:40px">Phone</span>'
+          +'<input value="'+esc(a.phone||"")+'" data-aid="'+a.id+'" data-f="phone" onchange="updAssoc(this)" placeholder="6591234567" style="flex:1;padding:4px;border-radius:5px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:17px;outline:none"/></div>'
           +'</div>'
-          +'<button onclick="deactivateAssoc(\''+a.id+'\',\''+esc(a.name)+'\')" style="padding:4px 8px;border:1px solid #3a1a1a;border-radius:6px;background:transparent;color:#e74c3c;font-size:10px;cursor:pointer">Deactivate</button>'
-          :'<button onclick="reactivateAssoc(\''+a.id+'\',\''+esc(a.name)+'\')" style="padding:4px 8px;border:1px solid #1a3a1a;border-radius:6px;background:transparent;color:#4caf50;font-size:10px;cursor:pointer">Reactivate</button>'
+          +'<button onclick="deactivateAssoc(\''+a.id+'\',\''+esc(a.name)+'\')" style="padding:4px 8px;border:1px solid #3a1a1a;border-radius:6px;background:transparent;color:#e74c3c;font-size:16px;cursor:pointer">Deactivate</button>'
+          :'<button onclick="reactivateAssoc(\''+a.id+'\',\''+esc(a.name)+'\')" style="padding:4px 8px;border:1px solid #1a3a1a;border-radius:6px;background:transparent;color:#4caf50;font-size:16px;cursor:pointer">Reactivate</button>'
         )+'</div>';
     }
     active.forEach(function(a){h+=row(a,true);});
-    if(inactive.length){h+='<div style="padding:6px 12px;font-size:9px;color:#444;text-transform:uppercase;border-top:1px solid #1a1a1a">Inactive</div>';inactive.forEach(function(a){h+=row(a,false);});}
+    if(inactive.length){h+='<div style="padding:6px 12px;font-size:15px;color:#888;text-transform:uppercase;border-top:1px solid #1a1a1a">Inactive</div>';inactive.forEach(function(a){h+=row(a,false);});}
     el.innerHTML=h;
   });
 }
