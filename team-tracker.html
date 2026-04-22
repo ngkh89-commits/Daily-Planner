@@ -397,11 +397,44 @@ function renderDash(){
     });
     h+='</div>';
 
+    h+='<div class="sec-lbl">Weekly Points</div><div class="card" id="weekly-pts"><div class="ld">Loading...</div></div>';
     h+='<div class="sec-lbl">Nudge Status</div><div class="card" id="nudge-wrap"></div>';
     h+='<div style="height:20px"></div>';
     document.getElementById("content").innerHTML=h;
+    buildWeeklyPoints(assocs,acts);
     buildNudgeList(assocs,ptd);
   });
+}
+
+function buildWeeklyPoints(assocs,acts){
+  var el=document.getElementById("weekly-pts");if(!el)return;
+  // Get Mon-Sun of current week
+  var days=[],today=new Date(),dow=today.getDay(),diff=dow===0?-6:1-dow;
+  for(var i=0;i<7;i++){
+    var d=new Date(today);d.setDate(today.getDate()+diff+i);
+    days.push(d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()));
+  }
+  var dayNames=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  // Build pts lookup: associate_id -> date -> pts
+  var lookup={};
+  assocs.forEach(function(a){lookup[a.id]={};days.forEach(function(d){lookup[a.id][d]=0;});});
+  acts.forEach(function(a){if(lookup[a.associate_id]&&lookup[a.associate_id][a.activity_date]!==undefined)lookup[a.associate_id][a.activity_date]+=(a.points||0);});
+  // Table
+  var h='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">';
+  h+='<thead><tr><th style="padding:8px 12px;text-align:left;color:#666;font-weight:500;border-bottom:1px solid #222">Name</th>';
+  days.forEach(function(d,i){h+='<th style="padding:8px 6px;text-align:center;color:#666;font-weight:500;border-bottom:1px solid #222;min-width:38px">'+dayNames[i]+'</th>';});
+  h+='<th style="padding:8px 8px;text-align:right;color:#666;font-weight:500;border-bottom:1px solid #222">Total</th></tr></thead><tbody>';
+  assocs.forEach(function(a){
+    var weekTotal=days.reduce(function(sum,d){return sum+(lookup[a.id][d]||0);},0);
+    h+='<tr><td style="padding:8px 12px;color:#f0f0ee;font-size:13px">'+esc(a.name)+'</td>';
+    days.forEach(function(d){
+      var pts=lookup[a.id][d]||0;
+      h+='<td style="padding:8px 6px;text-align:center;color:'+(pts>0?"#f5a623":"#333")+';font-weight:'+(pts>0?"600":"400")+'">'+( pts>0?pts:"-")+'</td>';
+    });
+    h+='<td style="padding:8px 8px;text-align:right;color:#f5a623;font-weight:700">'+weekTotal+'</td></tr>';
+  });
+  h+='</tbody></table></div>';
+  el.innerHTML=h;
 }
 
 function buildNudgeList(assocs,ptd){
@@ -472,6 +505,72 @@ function renderMine(){
 }
 
 // ADMIN
+function getDateRange(period){
+  var now=new Date(),y=now.getFullYear(),m=now.getMonth(),d=now.getDate();
+  var pad2=function(n){return n<10?"0"+n:""+n;};
+  if(period==="week"){
+    var dow=now.getDay(),diff=dow===0?-6:1-dow;
+    var mon=new Date(now);mon.setDate(d+diff);
+    var sun=new Date(mon);sun.setDate(mon.getDate()+6);
+    return{from:mon.getFullYear()+"-"+pad2(mon.getMonth()+1)+"-"+pad2(mon.getDate()),to:sun.getFullYear()+"-"+pad2(sun.getMonth()+1)+"-"+pad2(sun.getDate())};
+  } else if(period==="month"){
+    return{from:y+"-"+pad2(m+1)+"-01",to:y+"-"+pad2(m+1)+"-"+pad2(new Date(y,m+1,0).getDate())};
+  } else {
+    return{from:y+"-01-01",to:y+"-12-31"};
+  }
+}
+
+function exportData(){
+  var period=document.getElementById("exp-period").value;
+  var type=document.getElementById("exp-type").value;
+  var range=getDateRange(period);
+  var msg=document.getElementById("exp-msg");
+  msg.innerHTML='<div class="ms">Preparing export...</div>';
+
+  var promises=[];
+  if(type==="both"||type==="activities"){
+    promises.push(api("GET","activities","","select=associate_id,activity_type,points,activity_date&activity_date=gte."+range.from+"&activity_date=lte."+range.to+"&order=activity_date.asc"));
+  } else promises.push(Promise.resolve(null));
+  if(type==="both"||type==="sales"){
+    promises.push(api("GET","sales","","select=associate_id,pdt_type,pdt,premium,tenure,gst,commission,sale_date&sale_date=gte."+range.from+"&sale_date=lte."+range.to+"&order=sale_date.asc"));
+  } else promises.push(Promise.resolve(null));
+  promises.push(api("GET","associates","","select=id,name&order=name.asc"));
+
+  Promise.all(promises).then(function(res){
+    var acts=res[0]||[],sales=res[1]||[],assocs=res[2]||[];
+    var nameMap={};assocs.forEach(function(a){nameMap[a.id]=a.name;});
+    var csv="";
+
+    if(acts&&acts.length){
+      csv+="ACTIVITIES
+Date,Associate,Activity,Points
+";
+      acts.forEach(function(r){csv+=r.activity_date+","+esc2(nameMap[r.associate_id]||r.associate_id)+","+esc2(r.activity_type)+","+r.points+"
+";});
+      csv+="
+";
+    }
+    if(sales&&sales.length){
+      csv+="SALES
+Date,Associate,Product Type,Product,Premium,Tenure,GST,Commission
+";
+      sales.forEach(function(r){csv+=r.sale_date+","+esc2(nameMap[r.associate_id]||r.associate_id)+","+esc2(r.pdt_type)+","+esc2(r.pdt)+","+r.premium+","+r.tenure+","+(r.gst||0)+","+r.commission+"
+";});
+    }
+    if(!csv){msg.innerHTML='<div class="ms er">No data found for this period.</div>';return;}
+
+    var blob=new Blob([csv],{type:"text/csv"});
+    var a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download="CIA500-"+period+"-"+range.from+".csv";
+    a.click();URL.revokeObjectURL(a.href);
+    msg.innerHTML='<div class="ms">Downloaded!</div>';
+    setTimeout(function(){msg.innerHTML="";},2000);
+  });
+}
+
+function esc2(s){return'"'+(s||"").replace(/"/g,'""')+'"';}
+
 function renderAdmin(){
   var h='<div style="padding:10px 12px 4px;font-size:17px;color:#aaa">Manage associates, rates and activities.</div>';
   h+='<div class="sec-lbl">Associates</div><div class="card" id="assoc-list"><div class="ld">Loading...</div></div>';
@@ -500,6 +599,21 @@ function renderAdmin(){
   });
   h+='</div><button class="btn sec" onclick="addPdt()">+ Add Product/Rate</button>';
   h+='<button class="btn red" onclick="resetAll()">Reset to Defaults</button>';
+  // Export section (admin only)
+  h+='<div class="sec-lbl">Export Data</div>';
+  h+='<div class="card" style="margin:6px 12px"><div class="card-head"><div class="card-title">Download Records</div></div>';
+  h+='<div class="fg"><div class="fl">Period</div><select class="fs" id="exp-period">'
+    +'<option value="week">This Week</option>'
+    +'<option value="month">This Month</option>'
+    +'<option value="year">This Year</option>'
+    +'</select></div>';
+  h+='<div class="fg"><div class="fl">Data Type</div><select class="fs" id="exp-type">'
+    +'<option value="both">Activities + Sales</option>'
+    +'<option value="activities">Activities Only</option>'
+    +'<option value="sales">Sales Only</option>'
+    +'</select></div></div>';
+  h+='<button class="btn" onclick="exportData()">Download CSV</button>';
+  h+='<div id="exp-msg"></div>';
   h+='<div id="admin-msg"></div><div style="height:30px"></div>';
   document.getElementById("content").innerHTML=h;
   loadAdminAssocs();
