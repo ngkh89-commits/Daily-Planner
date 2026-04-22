@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="CIA500"/>
+<meta name="theme-color" content="#0f0f0f"/>
+<title>CIA500 Tracker</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#0f0f0f;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;color:#f0f0ee}
+body{overscroll-behavior:none}
+input,textarea,button,select{font-family:inherit;-webkit-appearance:none;appearance:none}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;background:#0f0f0f;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;gap:12px}
+#splash h1{font-size:28px;font-weight:700;letter-spacing:-0.02em;color:#f5a623}
+#splash p{font-size:13px;color:#666}
+#splash-form{display:flex;flex-direction:column;gap:10px;width:280px;margin-top:16px}
+#splash-form select,#splash-form input{padding:12px 14px;border-radius:10px;border:1px solid #2a2a2a;background:#1a1a1a;color:#f0f0ee;font-size:14px;outline:none}
+#splash-form button{padding:13px;border-radius:10px;border:none;background:#f5a623;color:#0f0f0f;font-size:14px;font-weight:700;cursor:pointer}
+#splash-form .err{font-size:11px;color:#e74c3c;text-align:center}
+
+/* HEADER */
+#header{position:sticky;top:0;z-index:10;background:#0f0f0f;border-bottom:1px solid #1e1e1e}
+#topbar{display:flex;align-items:center;justify-content:space-between;padding:11px 14px 8px}
+#whoami{font-size:13px;font-weight:600;color:#f5a623}
+#logout{font-size:11px;color:#444;cursor:pointer;padding:4px 8px;border:1px solid #222;border-radius:6px;background:transparent}
+#tabs{display:flex;border-top:1px solid #1e1e1e}
+.tab{flex:1;padding:10px 0;border:none;background:transparent;font-size:10px;font-weight:500;cursor:pointer;text-transform:uppercase;letter-spacing:0.06em;color:#444;border-bottom:2px solid transparent}
+.tab.active{color:#f5a623;border-bottom-color:#f5a623}
+
+/* CONTENT */
+#content{overflow-y:auto;-webkit-overflow-scrolling:touch;height:calc(100vh - 88px)}
+
+/* CARDS */
+.card{margin:10px 12px;background:#1a1a1a;border:1px solid #222;border-radius:12px;overflow:hidden}
+.card-head{padding:10px 14px;background:#141414;border-bottom:1px solid #222;display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:#666}
+.card-sub{font-size:12px;font-weight:500;color:#f0f0ee;margin-top:2px}
+
+/* FORM */
+.form-group{padding:10px 14px;border-bottom:1px solid #1e1e1e}
+.form-label{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px}
+.form-input{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:13px;outline:none}
+.form-input:focus{border-color:#f5a623}
+.form-select{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:13px;outline:none}
+.submit-btn{width:calc(100% - 24px);margin:12px;padding:13px;border-radius:10px;border:none;background:#f5a623;color:#0f0f0f;font-size:13px;font-weight:700;cursor:pointer}
+.submit-btn:active{opacity:0.85}
+.submit-btn.secondary{background:#1e1e1e;color:#f5a623;border:1px solid #f5a623}
+
+/* STATS GRID */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:12px}
+.stat-box{background:#141414;border:1px solid #1e1e1e;border-radius:10px;padding:10px 8px;text-align:center}
+.stat-label{font-size:9px;color:#555;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px}
+.stat-val{font-size:22px;font-weight:700;color:#f0f0ee}
+.stat-val.gold{color:#f5a623}
+
+/* LIST ROWS */
+.list-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #1a1a1a}
+.list-row:last-child{border-bottom:none}
+.list-name{font-size:13px;font-weight:500;flex:1}
+.list-val{font-size:12px;color:#f5a623;font-weight:600}
+.list-sub{font-size:10px;color:#555}
+.rank{width:20px;font-size:11px;color:#444;font-weight:600}
+
+/* BAR */
+.bar-wrap{height:6px;background:#1a1a1a;border-radius:3px;overflow:hidden;margin:4px 0 2px}
+.bar-fill{height:100%;border-radius:3px;background:#f5a623;transition:width 0.4s}
+
+/* ACTIVITY LOG */
+.act-row{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid #1a1a1a}
+.act-type{font-size:12px;flex:1}
+.act-pts{font-size:12px;color:#f5a623;font-weight:600;min-width:40px;text-align:right}
+.act-date{font-size:10px;color:#444}
+.del-btn{width:22px;height:22px;border:none;background:transparent;color:#333;cursor:pointer;font-size:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.del-btn:hover{color:#e74c3c}
+
+/* COMMISSION CALC */
+.comm-result{margin:0 12px 12px;padding:14px;background:#141414;border:1px solid #2a2a2a;border-radius:10px;text-align:center}
+.comm-amount{font-size:28px;font-weight:700;color:#f5a623}
+.comm-label{font-size:11px;color:#555;margin-top:4px}
+
+/* LOADING */
+.loading{padding:40px;text-align:center;color:#333;font-size:13px}
+.msg{padding:8px 12px;background:#1a2a1a;border-radius:8px;font-size:12px;color:#4caf50;margin:10px 12px;text-align:center}
+.err-msg{background:#2a1a1a;color:#e74c3c}
+
+/* DASHBOARD CHART */
+.chart-wrap{padding:12px 14px}
+.chart-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.chart-name{font-size:11px;color:#888;min-width:60px;text-align:right}
+.chart-bar-bg{flex:1;height:18px;background:#1a1a1a;border-radius:4px;overflow:hidden;position:relative}
+.chart-bar-inner{height:100%;border-radius:4px;background:#f5a623;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:9px;color:#0f0f0f;font-weight:700;min-width:4px;transition:width 0.5s}
+
+.section-label{padding:10px 14px 0;font-size:9px;color:#444;text-transform:uppercase;letter-spacing:0.07em}
+.empty{padding:24px;text-align:center;font-size:12px;color:#333}
+
+/* POINTS TAG */
+.pts-badge{padding:2px 7px;border-radius:10px;font-size:10px;font-weight:600;background:#1e2a0e;color:#8bc34a}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <h1>CIA500</h1>
+  <p>Team Performance Tracker</p>
+  <div id="splash-form">
+    <select id="sel-associate">
+      <option value="">Select your name…</option>
+    </select>
+    <div id="sel-err" class="err"></div>
+    <button onclick="doLogin()">Enter</button>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+  <div id="header">
+    <div id="topbar">
+      <div id="whoami"></div>
+      <button id="logout" onclick="doLogout()">Switch</button>
+    </div>
+    <div id="tabs">
+      <button class="tab active" onclick="switchTab('log')">Log</button>
+      <button class="tab" onclick="switchTab('sales')">Sales</button>
+      <button class="tab" onclick="switchTab('dashboard')">Dashboard</button>
+      <button class="tab" onclick="switchTab('mydata')">My Data</button>
+    </div>
+  </div>
+  <div id="content"></div>
+</div>
+
+<script>
+var SUPA_URL="https://ooqxkrcjtwdnqhsqhzpr.supabase.co";
+var SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9vcXhrcmNqdHdkbnFoc3FoenByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4NDUyOTcsImV4cCI6MjA5MjQyMTI5N30.ssLjdyR68xHuHopkeV86d3Uc6CMrpqtN7HWeoNz6WpE";
+
+var ACTIVITIES=[
+  {type:"Connected Call",pts:10},
+  {type:"Make 1 Appt",pts:25},
+  {type:"FF/Opening Appt",pts:100},
+  {type:"Kopi Appt",pts:50},
+  {type:"Closing Appt",pts:150},
+  {type:"RS Closure",pts:150},
+  {type:"RS Lead",pts:20},
+  {type:"Refer x1 Lead",pts:50},
+  {type:"Recruit Appt",pts:200},
+  {type:"Addition of New Client",pts:25},
+  {type:"Roadshow",pts:0},
+  {type:"Admin Work",pts:0},
+  {type:"Social Media",pts:0},
+  {type:"Rest",pts:0}
+];
+
+// Commission rate lookup by product (Year 1 rate %)
+var COMM_RATES={
+  "GT":{15:33,20:44,25:55,default:55},
+  "GCFLP":{24:52.8,default:52.8},
+  "GWA":{5:15,10:30,15:35,default:35},
+  "GRI":{15:31,20:44,default:44},
+  "GIA":2,"GIA_CPF":0.5,"PII":2.8,"PR":2.5,
+  "GCSS":40,"GSH":30,"GSH_P":10,
+  "GTC":15,"GTC_PS":10,"GTC_PO":10,"GTC_PLUS":20,
+  "GGP":30,"GJP":30,"GPA":20,"GHC":25,
+  "ACCCARE":30,"ESPP":30,
+  "PAYASSURE":{5:10.45,10:25,15:30,20:44,25:50,default:50},
+  "IUL":7.05,"UL":7.05,
+  "GWM_SP":3,"GMC":4,"GSP":0.15,
+  "PLG":7.4,"GLP":3,"FG":15,"FCB":20,"FG":15,
+  "G_HOSP_CASH":25,"GTC_P_PRIME":10,"GSH_P_PRIME":10
+};
+
+function getCommRate(pdt,tenure){
+  var r=COMM_RATES[pdt.toUpperCase()];
+  if(!r)return 0;
+  if(typeof r==="number")return r;
+  return r[tenure]||r[Object.keys(r).filter(k=>k!="default").sort((a,b)=>Math.abs(tenure-a)-Math.abs(tenure-b))[0]]||r.default||0;
+}
+
+function calcComm(pdt,premium,tenure,gst){
+  var rate=getCommRate(pdt,tenure);
+  var base=gst>0?premium/(1+gst):premium;
+  return Math.round(base*(rate/100)*100)/100;
+}
+
+var curAssociate=null,curTab="log";
+var PRODUCTS=["GT","GWA","GCSS","GSH","GTC","GGP","GJP","GPA","GHC","GIA","GIA_CPF","PII","PR","PAYASSURE","ACCCARE","IUL","UL","GWM_SP","G_HOSP_CASH","GLP","GRI","FCB","FG","GTC_PLUS","LIFESECURE"];
+var PDT_TYPES=["LIFE_TERM_ILP","HEALTH_PLAN","CI","ACCIDENT","DISABILITY_INCOME","INVESTMENT","RETIREMENT","SAVINGS","SP","SP_USD"];
+
+// --- API helpers ---
+function api(method,table,body,params){
+  var url=SUPA_URL+"/rest/v1/"+table;
+  if(params)url+="?"+params;
+  return fetch(url,{
+    method:method||"GET",
+    headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+SUPA_KEY,"Content-Type":"application/json","Prefer":method==="POST"?"return=representation":""},
+    body:body?JSON.stringify(body):undefined
+  }).then(function(r){return r.json();});
+}
+
+function pad(n){return n<10?"0"+n:""+n;}
+function todayStr(){var d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());}
+function fmtDate(d){return new Date(d+"T00:00:00").toLocaleDateString("en-SG",{day:"numeric",month:"short"});}
+function fmtMoney(n){return "$"+Number(n||0).toLocaleString("en-SG",{minimumFractionDigits:2,maximumFractionDigits:2});}
+function esc(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+// --- Login ---
+function loadAssociates(){
+  api("GET","associates","","order=name.asc&select=id,name").then(function(rows){
+    var sel=document.getElementById("sel-associate");
+    (rows||[]).forEach(function(a){
+      var o=document.createElement("option");
+      o.value=a.id;o.textContent=a.name;
+      sel.appendChild(o);
+    });
+    // Restore session
+    var saved=localStorage.getItem("cia500_user");
+    if(saved){
+      try{var u=JSON.parse(saved);curAssociate=u;showApp();}catch(e){}
+    }
+  });
+}
+
+function doLogin(){
+  var sel=document.getElementById("sel-associate");
+  var id=sel.value,name=sel.options[sel.selectedIndex]&&sel.options[sel.selectedIndex].text;
+  if(!id){document.getElementById("sel-err").textContent="Please select your name.";return;}
+  curAssociate={id:id,name:name};
+  localStorage.setItem("cia500_user",JSON.stringify(curAssociate));
+  showApp();
+}
+function doLogout(){
+  curAssociate=null;localStorage.removeItem("cia500_user");
+  document.getElementById("app").style.display="none";
+  document.getElementById("splash").style.display="flex";
+}
+function showApp(){
+  document.getElementById("splash").style.display="none";
+  document.getElementById("app").style.display="block";
+  document.getElementById("whoami").textContent=curAssociate.name;
+  switchTab("log");
+}
+
+// --- TAB SWITCH ---
+function switchTab(t){
+  curTab=t;
+  document.querySelectorAll(".tab").forEach(function(el){
+    el.classList.toggle("active",el.textContent.toLowerCase()===t||(t==="mydata"&&el.textContent==="My Data")||(t==="dashboard"&&el.textContent==="Dashboard"));
+  });
+  render();
+}
+
+function render(){
+  if(curTab==="log")renderLog();
+  else if(curTab==="sales")renderSales();
+  else if(curTab==="dashboard")renderDashboard();
+  else renderMyData();
+}
+
+// --- LOG ACTIVITY ---
+function renderLog(){
+  var html='<div class="card"><div class="card-head"><div><div class="card-title">Log Activity</div><div class="card-sub">'+todayStr()+'</div></div></div>';
+  html+='<div class="form-group"><div class="form-label">Activity Type</div><select class="form-select" id="act-type">';
+  ACTIVITIES.forEach(function(a){html+='<option value="'+a.type+'|'+a.pts+'">'+a.type+' ('+a.pts+' pts)</option>';});
+  html+='</select></div>';
+  html+='<div class="form-group"><div class="form-label">Date</div><input type="date" class="form-input" id="act-date" value="'+todayStr()+'"/></div>';
+  html+='</div>';
+  html+='<button class="submit-btn" onclick="submitActivity()">Log Activity</button>';
+  html+='<div id="act-msg"></div>';
+
+  // Today's log
+  html+='<div class="section-label">Today\'s Activity</div>';
+  html+='<div class="card" id="act-list"><div class="loading">Loading…</div></div>';
+
+  document.getElementById("content").innerHTML=html;
+  loadTodayActivities();
+}
+
+function loadTodayActivities(){
+  api("GET","activities","","select=*&associate_id=eq."+curAssociate.id+"&activity_date=eq."+todayStr()+"&order=created_at.desc").then(function(rows){
+    var el=document.getElementById("act-list");
+    if(!el)return;
+    if(!rows||!rows.length){el.innerHTML='<div class="empty">No activities logged today.</div>';return;}
+    var total=rows.reduce(function(a,r){return a+(r.points||0);},0);
+    var html='<div class="list-row"><span class="list-name" style="color:#666">Total today</span><span class="list-val">'+total+' pts</span></div>';
+    rows.forEach(function(r){
+      html+='<div class="act-row"><div><div class="act-type">'+esc(r.activity_type)+'</div><div class="act-date">'+fmtDate(r.activity_date)+'</div></div>'
+        +'<span class="act-pts">'+r.points+' pts</span>'
+        +'<button class="del-btn" onclick="delActivity(\''+r.id+'\')">×</button></div>';
+    });
+    el.innerHTML=html;
+  });
+}
+
+function submitActivity(){
+  var sel=document.getElementById("act-type").value.split("|");
+  var date=document.getElementById("act-date").value||todayStr();
+  var msg=document.getElementById("act-msg");
+  api("POST","activities",{associate_id:curAssociate.id,activity_type:sel[0],points:parseInt(sel[1]),activity_date:date}).then(function(r){
+    if(r&&r[0]&&r[0].id){
+      msg.innerHTML='<div class="msg">✓ Logged: '+esc(sel[0])+'</div>';
+      loadTodayActivities();
+      setTimeout(function(){msg.innerHTML="";},2000);
+    } else {
+      msg.innerHTML='<div class="msg err-msg">Error logging. Try again.</div>';
+    }
+  });
+}
+
+function delActivity(id){
+  if(!confirm("Delete this activity?"))return;
+  fetch(SUPA_URL+"/rest/v1/activities?id=eq."+id,{method:"DELETE",headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+SUPA_KEY}})
+    .then(function(){loadTodayActivities();});
+}
+
+// --- LOG SALE ---
+function renderSales(){
+  var html='<div class="card"><div class="card-head"><div><div class="card-title">Log Sale</div><div class="card-sub">FYC auto-calculated</div></div></div>';
+  html+='<div class="form-group"><div class="form-label">Product Type</div><select class="form-select" id="pdt-type">';
+  PDT_TYPES.forEach(function(p){html+='<option>'+p+'</option>';});
+  html+='</select></div>';
+  html+='<div class="form-group"><div class="form-label">Product (PDT)</div><select class="form-select" id="pdt-name">';
+  PRODUCTS.forEach(function(p){html+='<option>'+p+'</option>';});
+  html+='</select></div>';
+  html+='<div class="form-group"><div class="form-label">Premium ($)</div><input type="number" class="form-input" id="pdt-premium" placeholder="0.00" oninput="previewComm()"/></div>';
+  html+='<div class="form-group"><div class="form-label">Tenure (years)</div><input type="number" class="form-input" id="pdt-tenure" placeholder="e.g. 25" oninput="previewComm()"/></div>';
+  html+='<div class="form-group"><div class="form-label">GST (0 or 0.09)</div><input type="number" class="form-input" id="pdt-gst" value="0" step="0.01" oninput="previewComm()"/></div>';
+  html+='<div class="form-group"><div class="form-label">Sale Date</div><input type="date" class="form-input" id="pdt-date" value="'+todayStr()+'"/></div>';
+  html+='</div>';
+
+  // Commission preview
+  html+='<div class="comm-result" id="comm-preview"><div class="comm-amount">$0.00</div><div class="comm-label">Estimated FYC Commission</div></div>';
+  html+='<button class="submit-btn" onclick="submitSale()">Log Sale</button>';
+  html+='<div id="sale-msg"></div>';
+
+  // Recent sales
+  html+='<div class="section-label">My Recent Sales</div>';
+  html+='<div class="card" id="sale-list"><div class="loading">Loading…</div></div>';
+
+  document.getElementById("content").innerHTML=html;
+  loadMySales();
+}
+
+function previewComm(){
+  var pdt=document.getElementById("pdt-name").value;
+  var premium=parseFloat(document.getElementById("pdt-premium").value)||0;
+  var tenure=parseInt(document.getElementById("pdt-tenure").value)||1;
+  var gst=parseFloat(document.getElementById("pdt-gst").value)||0;
+  var comm=calcComm(pdt,premium,tenure,gst);
+  var el=document.getElementById("comm-preview");
+  if(el)el.querySelector(".comm-amount").textContent=fmtMoney(comm);
+}
+
+function submitSale(){
+  var pdt=document.getElementById("pdt-name").value;
+  var pdtType=document.getElementById("pdt-type").value;
+  var premium=parseFloat(document.getElementById("pdt-premium").value)||0;
+  var tenure=parseInt(document.getElementById("pdt-tenure").value)||1;
+  var gst=parseFloat(document.getElementById("pdt-gst").value)||0;
+  var date=document.getElementById("pdt-date").value||todayStr();
+  var msg=document.getElementById("sale-msg");
+  if(!premium){msg.innerHTML='<div class="msg err-msg">Enter a premium amount.</div>';return;}
+  var comm=calcComm(pdt,premium,tenure,gst);
+  api("POST","sales",{associate_id:curAssociate.id,pdt_type:pdtType,pdt:pdt,premium:premium,tenure:tenure,gst:gst,commission:comm,sale_date:date}).then(function(r){
+    if(r&&r[0]&&r[0].id){
+      msg.innerHTML='<div class="msg">✓ Sale logged — FYC: '+fmtMoney(comm)+'</div>';
+      loadMySales();
+      setTimeout(function(){msg.innerHTML="";},2500);
+    } else {
+      msg.innerHTML='<div class="msg err-msg">Error. Try again.</div>';
+    }
+  });
+}
+
+function loadMySales(){
+  api("GET","sales","","select=*&associate_id=eq."+curAssociate.id+"&order=sale_date.desc&limit=20").then(function(rows){
+    var el=document.getElementById("sale-list");
+    if(!el)return;
+    if(!rows||!rows.length){el.innerHTML='<div class="empty">No sales logged yet.</div>';return;}
+    var total=rows.reduce(function(a,r){return a+(r.commission||0);},0);
+    var html='<div class="list-row"><span class="list-name" style="color:#666">Total FYC</span><span class="list-val">'+fmtMoney(total)+'</span></div>';
+    rows.forEach(function(r){
+      html+='<div class="act-row">'
+        +'<div style="flex:1"><div class="act-type">'+esc(r.pdt)+' · '+esc(r.pdt_type)+'</div>'
+        +'<div class="act-date">Premium: '+fmtMoney(r.premium)+' · '+r.tenure+'yr · '+fmtDate(r.sale_date)+'</div></div>'
+        +'<span class="act-pts">'+fmtMoney(r.commission)+'</span>'
+        +'<button class="del-btn" onclick="delSale(\''+r.id+'\')">×</button>'
+        +'</div>';
+    });
+    el.innerHTML=html;
+  });
+}
+
+function delSale(id){
+  if(!confirm("Delete this sale record?"))return;
+  fetch(SUPA_URL+"/rest/v1/sales?id=eq."+id,{method:"DELETE",headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+SUPA_KEY}})
+    .then(function(){loadMySales();});
+}
+
+// --- DASHBOARD ---
+function renderDashboard(){
+  document.getElementById("content").innerHTML='<div class="loading">Loading dashboard…</div>';
+  Promise.all([
+    api("GET","associates","","select=id,name,target&order=name.asc"),
+    api("GET","sales","","select=associate_id,commission"),
+    api("GET","activities","","select=associate_id,points,activity_date")
+  ]).then(function(res){
+    var associates=res[0]||[], sales=res[1]||[], acts=res[2]||[];
+    var today=todayStr();
+
+    // Build per-associate aggregates
+    var fyc={},pts={},ptsTdy={};
+    associates.forEach(function(a){fyc[a.id]=0;pts[a.id]=0;ptsTdy[a.id]=0;});
+    sales.forEach(function(s){fyc[s.associate_id]=(fyc[s.associate_id]||0)+(s.commission||0);});
+    acts.forEach(function(a){
+      pts[a.associate_id]=(pts[a.associate_id]||0)+(a.points||0);
+      if(a.activity_date===today)ptsTdy[a.associate_id]=(ptsTdy[a.associate_id]||0)+(a.points||0);
+    });
+
+    // Sort by FYC desc
+    var sorted=associates.slice().sort(function(a,b){return (fyc[b.id]||0)-(fyc[a.id]||0);});
+    var maxFyc=Math.max.apply(null,sorted.map(function(a){return fyc[a.id]||0;}));
+
+    var totalFyc=sales.reduce(function(a,s){return a+(s.commission||0);},0);
+    var totalPts=Object.values(pts).reduce(function(a,b){return a+b;},0);
+    var todayPts=Object.values(ptsTdy).reduce(function(a,b){return a+b;},0);
+
+    var html='<div class="stat-grid">'
+      +'<div class="stat-box"><div class="stat-label">Team FYC</div><div class="stat-val gold">'+fmtMoney(totalFyc)+'</div></div>'
+      +'<div class="stat-box"><div class="stat-label">Total Pts</div><div class="stat-val">'+totalPts+'</div></div>'
+      +'<div class="stat-box"><div class="stat-label">Today Pts</div><div class="stat-val">'+todayPts+'</div></div>'
+      +'</div>';
+
+    // FYC chart
+    html+='<div class="section-label">FYC — Year to Date</div><div class="card"><div class="chart-wrap">';
+    sorted.forEach(function(a){
+      var pct=maxFyc>0?Math.round((fyc[a.id]||0)/maxFyc*100):0;
+      var goalPct=a.target>0?Math.min(100,Math.round((fyc[a.id]||0)/a.target*100)):0;
+      html+='<div class="chart-bar-row">'
+        +'<div class="chart-name">'+esc(a.name)+'</div>'
+        +'<div class="chart-bar-bg"><div class="chart-bar-inner" style="width:'+pct+'%">'+fmtMoney(fyc[a.id]||0)+'</div></div>'
+        +'</div>';
+      html+='<div style="display:flex;align-items:center;gap:8px;padding:0 0 6px 68px">'
+        +'<div class="bar-wrap" style="flex:1;margin:0"><div class="bar-fill" style="width:'+goalPct+'%;background:#333;background:linear-gradient(90deg,#2a4a1a,#4caf50)"></div></div>'
+        +'<span style="font-size:9px;color:#444;min-width:36px">'+goalPct+'% goal</span>'
+        +'</div>';
+    });
+    html+='</div></div>';
+
+    // Points leaderboard
+    html+='<div class="section-label">Points Leaderboard</div><div class="card">';
+    var ptsSorted=associates.slice().sort(function(a,b){return (pts[b.id]||0)-(pts[a.id]||0);});
+    ptsSorted.forEach(function(a,i){
+      html+='<div class="list-row">'
+        +'<div class="rank">'+(i+1)+'</div>'
+        +'<div class="list-name">'+esc(a.name)+'</div>'
+        +'<div>'
+        +'<div class="list-val">'+(pts[a.id]||0)+' pts</div>'
+        +'<div class="list-sub">Today: '+(ptsTdy[a.id]||0)+'</div>'
+        +'</div></div>';
+    });
+    html+='</div><div style="height:20px"></div>';
+
+    document.getElementById("content").innerHTML=html;
+  });
+}
+
+// --- MY DATA ---
+function renderMyData(){
+  document.getElementById("content").innerHTML='<div class="loading">Loading…</div>';
+  Promise.all([
+    api("GET","sales","","select=*&associate_id=eq."+curAssociate.id+"&order=sale_date.desc"),
+    api("GET","activities","","select=*&associate_id=eq."+curAssociate.id+"&order=activity_date.desc&limit=50"),
+    api("GET","associates","","select=*&id=eq."+curAssociate.id)
+  ]).then(function(res){
+    var sales=res[0]||[], acts=res[1]||[], me=(res[2]||[])[0]||{};
+    var totalFyc=sales.reduce(function(a,s){return a+(s.commission||0);},0);
+    var totalPts=acts.reduce(function(a,r){return a+(r.points||0);},0);
+    var goalPct=me.target>0?Math.min(100,Math.round(totalFyc/me.target*100)):0;
+
+    var html='<div class="stat-grid">'
+      +'<div class="stat-box"><div class="stat-label">My FYC</div><div class="stat-val gold">'+fmtMoney(totalFyc)+'</div></div>'
+      +'<div class="stat-box"><div class="stat-label">Target</div><div class="stat-val">'+fmtMoney(me.target)+'</div></div>'
+      +'<div class="stat-box"><div class="stat-label">Achieved</div><div class="stat-val">'+goalPct+'%</div></div>'
+      +'</div>';
+
+    // Goal bar
+    html+='<div style="padding:0 12px 12px">'
+      +'<div class="bar-wrap" style="height:10px;margin:4px 0"><div class="bar-fill" style="width:'+goalPct+'%;background:linear-gradient(90deg,#f5a623,#f5d623)"></div></div>'
+      +'<div style="font-size:10px;color:#444">'+fmtMoney(totalFyc)+' of '+fmtMoney(me.target)+' target</div>'
+      +'</div>';
+
+    html+='<div class="stat-grid">'
+      +'<div class="stat-box"><div class="stat-label">Total Pts</div><div class="stat-val">'+totalPts+'</div></div>'
+      +'<div class="stat-box"><div class="stat-label">Sales</div><div class="stat-val">'+sales.length+'</div></div>'
+      +'<div class="stat-box"><div class="stat-label">Activities</div><div class="stat-val">'+acts.length+'</div></div>'
+      +'</div>';
+
+    // Sales breakdown
+    html+='<div class="section-label">My Sales</div><div class="card">';
+    if(sales.length){
+      sales.forEach(function(s){
+        html+='<div class="act-row">'
+          +'<div style="flex:1"><div class="act-type">'+esc(s.pdt)+' · '+esc(s.pdt_type)+'</div>'
+          +'<div class="act-date">'+fmtMoney(s.premium)+' · '+s.tenure+'yr · '+fmtDate(s.sale_date)+'</div></div>'
+          +'<span class="act-pts">'+fmtMoney(s.commission)+'</span></div>';
+      });
+    } else {html+='<div class="empty">No sales yet.</div>';}
+    html+='</div>';
+
+    // Activity breakdown
+    html+='<div class="section-label">Recent Activities</div><div class="card">';
+    if(acts.length){
+      // Group by type
+      var byType={};
+      acts.forEach(function(a){byType[a.activity_type]=(byType[a.activity_type]||0)+1;});
+      Object.keys(byType).sort().forEach(function(t){
+        html+='<div class="list-row"><span class="list-name">'+esc(t)+'</span><span class="list-val">×'+byType[t]+'</span></div>';
+      });
+    } else {html+='<div class="empty">No activities yet.</div>';}
+    html+='</div><div style="height:20px"></div>';
+
+    document.getElementById("content").innerHTML=html;
+  });
+}
+
+// Boot
+loadAssociates();
+</script>
+</body>
+</html>
