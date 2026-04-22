@@ -542,20 +542,12 @@ function exportData(){
     var csv="";
 
     if(acts&&acts.length){
-      csv+="ACTIVITIES
-Date,Associate,Activity,Points
-";
-      acts.forEach(function(r){csv+=r.activity_date+","+esc2(nameMap[r.associate_id]||r.associate_id)+","+esc2(r.activity_type)+","+r.points+"
-";});
-      csv+="
-";
-    }
+      csv+="ACTIVITIES\r\nDate,Associate,Activity,Points\r\n";
+      acts.forEach(function(r){csv+=r.activity_date+","+esc2(nameMap[r.associate_id]||r.associate_id)+","+esc2(r.activity_type)+","+r.points+"";});
+          }
     if(sales&&sales.length){
-      csv+="SALES
-Date,Associate,Product Type,Product,Premium,Tenure,GST,Commission
-";
-      sales.forEach(function(r){csv+=r.sale_date+","+esc2(nameMap[r.associate_id]||r.associate_id)+","+esc2(r.pdt_type)+","+esc2(r.pdt)+","+r.premium+","+r.tenure+","+(r.gst||0)+","+r.commission+"
-";});
+      csv+="SALES\r\nDate,Associate,Product Type,Product,Premium,Tenure,GST,Commission\r\n";
+      sales.forEach(function(r){csv+=r.sale_date+","+esc2(nameMap[r.associate_id]||r.associate_id)+","+esc2(r.pdt_type)+","+esc2(r.pdt)+","+r.premium+","+r.tenure+","+(r.gst||0)+","+r.commission+"";});
     }
     if(!csv){msg.innerHTML='<div class="ms er">No data found for this period.</div>';return;}
 
@@ -588,7 +580,7 @@ function renderAdmin(){
         +'<input type="number" step="0.01" value="'+r.flat+'" data-pdt="'+esc(pdt)+'" data-type="flat" onchange="updRate(this)"/><span style="font-size:15px;color:#888">%</span></div>';
     } else if(r.table){
       h+='<div style="padding:8px 12px;border-bottom:1px solid #1a1a1a;background:#141414">'
-        +'<span style="font-size:15px;color:#f5a623">'+esc(pdt)+' — tenure based</span></div>';
+        +'<span style="font-size:15px;color:#f5a623">'+esc(pdt)+' - tenure based</span></div>';
       Object.keys(r.table).sort(function(a,b){return+a-+b;}).forEach(function(ten){
         h+='<div class="adrow" style="padding:6px 12px 6px 24px">'
           +'<span style="font-size:14px;color:#666;min-width:60px">'+ten+' yr</span>'
