@@ -276,9 +276,9 @@ function esc(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace
 var curAssociate=null,curTab="log";
 
 function loadAssociates(){
-  api("GET","associates","","order=name.asc&select=id,name&active=neq.false").then(function(rows){
+  api("GET","associates","","order=name.asc&select=id,name,active").then(function(rows){
     var sel=document.getElementById("sel-associate");
-    (rows||[]).forEach(function(a){
+    (rows||[]).filter(function(a){return a.active!==false;}).forEach(function(a){
       var o=document.createElement("option");o.value=a.id;o.textContent=a.name;
       sel.appendChild(o);
     });
@@ -458,7 +458,7 @@ function delSale(id){
 function renderDashboard(){
   document.getElementById("content").innerHTML='<div class="loading">Loading dashboard…</div>';
   Promise.all([
-    api("GET","associates","","select=id,name,target&order=name.asc&active=neq.false"),
+    api("GET","associates","","select=id,name,target&order=name.asc&active=not.eq.false"),
     api("GET","sales","","select=associate_id,commission"),
     api("GET","activities","","select=associate_id,points,activity_date")
   ]).then(function(res){
@@ -579,7 +579,7 @@ function renderMyData(){
   Promise.all([
     api("GET","sales","","select=*&associate_id=eq."+curAssociate.id+"&order=sale_date.desc"),
     api("GET","activities","","select=*&associate_id=eq."+curAssociate.id+"&order=activity_date.desc&limit=100"),
-    api("GET","associates","","select=*&id=eq."+curAssociate.id+"&active=neq.false")
+    api("GET","associates","","select=*&id=eq."+curAssociate.id)
   ]).then(function(res){
     var sales=res[0]||[],acts=res[1]||[],me=(res[2]||[])[0]||{};
     var totalFyc=sales.reduce(function(a,s){return a+(s.commission||0);},0);
