@@ -3,838 +3,583 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-title" content="CIA500"/>
 <meta name="theme-color" content="#0f0f0f"/>
 <title>CIA500 Tracker</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;background:#0f0f0f;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;color:#f0f0ee}
+html,body{height:100%;background:#0f0f0f;font-family:-apple-system,BlinkMacSystemFont,sans-serif;color:#f0f0ee}
 body{overscroll-behavior:none}
 input,textarea,button,select{font-family:inherit;-webkit-appearance:none;appearance:none}
 #splash{position:fixed;inset:0;background:#0f0f0f;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;gap:12px}
-#splash h1{font-size:28px;font-weight:700;letter-spacing:-0.02em;color:#f5a623}
+#splash h1{font-size:28px;font-weight:700;color:#f5a623}
 #splash p{font-size:13px;color:#555}
 #splash-form{display:flex;flex-direction:column;gap:10px;width:280px;margin-top:16px}
-#splash-form select,#splash-form input{padding:12px 14px;border-radius:10px;border:1px solid #2a2a2a;background:#1a1a1a;color:#f0f0ee;font-size:14px;outline:none}
+#splash-form select{padding:12px 14px;border-radius:10px;border:1px solid #2a2a2a;background:#1a1a1a;color:#f0f0ee;font-size:14px;outline:none}
 #splash-form button{padding:13px;border-radius:10px;border:none;background:#f5a623;color:#0f0f0f;font-size:14px;font-weight:700;cursor:pointer}
 .err{font-size:11px;color:#e74c3c;text-align:center}
 #header{position:sticky;top:0;z-index:10;background:#0f0f0f;border-bottom:1px solid #1e1e1e}
 #topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 8px}
 #whoami{font-size:13px;font-weight:600;color:#f5a623}
-#logout{font-size:11px;color:#444;cursor:pointer;padding:4px 8px;border:1px solid #222;border-radius:6px;background:transparent}
+.hbtn{font-size:11px;color:#444;cursor:pointer;padding:4px 8px;border:1px solid #222;border-radius:6px;background:transparent}
 #tabs{display:flex;border-top:1px solid #1e1e1e;overflow-x:auto}
-.tab{flex:1;min-width:60px;padding:10px 4px;border:none;background:transparent;font-size:10px;font-weight:500;cursor:pointer;text-transform:uppercase;letter-spacing:0.05em;color:#444;border-bottom:2px solid transparent;white-space:nowrap}
+.tab{flex:1;min-width:50px;padding:10px 2px;border:none;background:transparent;font-size:10px;font-weight:500;cursor:pointer;text-transform:uppercase;letter-spacing:0.05em;color:#444;border-bottom:2px solid transparent;white-space:nowrap}
 .tab.active{color:#f5a623;border-bottom-color:#f5a623}
 #content{overflow-y:auto;-webkit-overflow-scrolling:touch;height:calc(100vh - 88px)}
 .card{margin:10px 12px;background:#1a1a1a;border:1px solid #222;border-radius:12px;overflow:hidden}
 .card-head{padding:10px 14px;background:#141414;border-bottom:1px solid #222}
 .card-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:#666}
 .card-sub{font-size:12px;font-weight:500;color:#f0f0ee;margin-top:2px}
-.form-group{padding:10px 14px;border-bottom:1px solid #1e1e1e}
-.form-label{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px}
-.form-input{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:13px;outline:none}
-.form-input:focus{border-color:#f5a623}
-.form-select{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:13px;outline:none}
-.submit-btn{width:calc(100% - 24px);margin:12px;padding:13px;border-radius:10px;border:none;background:#f5a623;color:#0f0f0f;font-size:13px;font-weight:700;cursor:pointer}
-.submit-btn:active{opacity:0.85}
-.submit-btn.sec{background:#1e1e1e;color:#f5a623;border:1px solid #333}
-.submit-btn.red{background:#2a1010;color:#e74c3c;border:1px solid #3a1a1a}
-.stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:12px}
-.stat-box{background:#141414;border:1px solid #1e1e1e;border-radius:10px;padding:10px 6px;text-align:center}
-.stat-label{font-size:9px;color:#555;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px}
-.stat-val{font-size:20px;font-weight:700;color:#f0f0ee}
-.stat-val.gold{color:#f5a623}
-.list-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #1a1a1a}
-.list-row:last-child{border-bottom:none}
-.list-name{font-size:13px;font-weight:500;flex:1}
-.list-val{font-size:12px;color:#f5a623;font-weight:600}
-.list-sub{font-size:10px;color:#555}
-.rank{width:20px;font-size:11px;color:#444;font-weight:600}
-.bar-wrap{height:6px;background:#1a1a1a;border-radius:3px;overflow:hidden;margin:4px 0 2px}
-.bar-fill{height:100%;border-radius:3px;background:#f5a623}
-.act-row{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid #1a1a1a}
-.act-type{font-size:12px;flex:1}
-.act-pts{font-size:12px;color:#f5a623;font-weight:600;min-width:50px;text-align:right}
-.act-date{font-size:10px;color:#444}
-.del-btn{width:24px;height:24px;border:none;background:transparent;color:#333;cursor:pointer;font-size:18px;flex-shrink:0;padding:0;display:flex;align-items:center;justify-content:center}
-.del-btn:hover{color:#e74c3c}
-.comm-result{margin:0 12px 4px;padding:14px;background:#141414;border:1px solid #2a2a2a;border-radius:10px;text-align:center}
-.comm-amount{font-size:26px;font-weight:700;color:#f5a623}
-.comm-label{font-size:11px;color:#555;margin-top:3px}
-.comm-note{font-size:10px;color:#f5a623;margin-top:2px}
-.loading{padding:40px;text-align:center;color:#333;font-size:13px}
-.msg{padding:8px 12px;background:#1a2a1a;border-radius:8px;font-size:12px;color:#4caf50;margin:8px 12px;text-align:center}
-.msg.err{background:#2a1a1a;color:#e74c3c}
-.chart-wrap{padding:12px 14px}
-.chart-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.chart-name{font-size:11px;color:#666;min-width:62px;text-align:right}
-.chart-bar-bg{flex:1;height:20px;background:#1a1a1a;border-radius:4px;overflow:hidden}
-.chart-bar-inner{height:100%;border-radius:4px;background:#f5a623;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:9px;color:#0f0f0f;font-weight:700;min-width:4px}
-.section-label{padding:10px 14px 0;font-size:9px;color:#444;text-transform:uppercase;letter-spacing:0.07em}
-.empty{padding:24px;text-align:center;font-size:12px;color:#333}
-.gst-note{font-size:10px;color:#f5a623;padding:4px 14px 8px;background:#1a1a0a}
-/* Admin */
-.admin-row{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #1a1a1a}
-.admin-row input{flex:1;padding:6px 8px;border-radius:6px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:12px;outline:none}
-.admin-row input:focus{border-color:#f5a623}
-.admin-tag{font-size:10px;color:#666;min-width:30px}
+.fg{padding:10px 14px;border-bottom:1px solid #1e1e1e}
+.fl{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px}
+.fi{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:13px;outline:none}
+.fi:focus{border-color:#f5a623}
+.fs{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:13px;outline:none}
+.btn{width:calc(100% - 24px);margin:12px;padding:13px;border-radius:10px;border:none;background:#f5a623;color:#0f0f0f;font-size:13px;font-weight:700;cursor:pointer}
+.btn.sec{background:#1e1e1e;color:#f5a623;border:1px solid #333}
+.btn.red{background:#2a1010;color:#e74c3c;border:1px solid #3a1a1a}
+.sg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:12px}
+.sb{background:#141414;border:1px solid #1e1e1e;border-radius:10px;padding:10px 6px;text-align:center}
+.sl{font-size:9px;color:#555;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px}
+.sv{font-size:20px;font-weight:700;color:#f0f0ee}
+.sv.g{color:#f5a623}
+.lr{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #1a1a1a}
+.lr:last-child{border-bottom:none}
+.ln{font-size:13px;font-weight:500;flex:1}
+.lv{font-size:12px;color:#f5a623;font-weight:600}
+.ls{font-size:10px;color:#555}
+.rk{width:20px;font-size:11px;color:#444;font-weight:600}
+.bw{height:6px;background:#1a1a1a;border-radius:3px;overflow:hidden;margin:4px 0 2px}
+.bf{height:100%;border-radius:3px;background:#f5a623}
+.ar{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid #1a1a1a}
+.at{font-size:12px;flex:1}
+.ap{font-size:12px;color:#f5a623;font-weight:600;min-width:50px;text-align:right}
+.ad{font-size:10px;color:#444}
+.db{width:24px;height:24px;border:none;background:transparent;color:#333;cursor:pointer;font-size:18px;flex-shrink:0;padding:0;display:flex;align-items:center;justify-content:center}
+.cr{margin:0 12px 4px;padding:14px;background:#141414;border:1px solid #2a2a2a;border-radius:10px;text-align:center}
+.ca{font-size:26px;font-weight:700;color:#f5a623}
+.cn{font-size:11px;color:#555;margin-top:3px}
+.cn2{font-size:10px;color:#f5a623;margin-top:2px}
+.gn{font-size:10px;color:#f5a623;padding:4px 14px 8px;background:#1a1a0a}
+.ld{padding:40px;text-align:center;color:#333;font-size:13px}
+.ms{padding:8px 12px;background:#1a2a1a;border-radius:8px;font-size:12px;color:#4caf50;margin:8px 12px;text-align:center}
+.ms.er{background:#2a1a1a;color:#e74c3c}
+.cw{padding:12px 14px}
+.cbr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.cnm{font-size:11px;color:#666;min-width:62px;text-align:right}
+.cbb{flex:1;height:20px;background:#1a1a1a;border-radius:4px;overflow:hidden}
+.cbi{height:100%;border-radius:4px;background:#f5a623;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:9px;color:#0f0f0f;font-weight:700;min-width:4px}
+.sec-lbl{padding:10px 14px 0;font-size:9px;color:#444;text-transform:uppercase;letter-spacing:0.07em}
+.emp{padding:24px;text-align:center;font-size:12px;color:#333}
+.adrow{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #1a1a1a}
+.adrow input{flex:1;padding:5px 8px;border-radius:6px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:12px;outline:none}
 </style>
 </head>
 <body>
-
 <div id="splash">
   <h1>CIA500</h1>
   <p>Team Performance Tracker</p>
   <div id="splash-form">
-    <select id="sel-associate"><option value="">Select your name…</option></select>
+    <select id="sel-name"><option value="">Select your name...</option></select>
     <div id="sel-err" class="err"></div>
     <button onclick="doLogin()">Enter</button>
   </div>
 </div>
-
 <div id="app" style="display:none">
   <div id="header">
     <div id="topbar">
       <div id="whoami"></div>
-      <div style="display:flex;gap:6px"><button id="admin-lock" onclick="unlockAdmin()" style="font-size:11px;color:#444;cursor:pointer;padding:4px 8px;border:1px solid #222;border-radius:6px;background:transparent">🔒</button><button id="logout" onclick="doLogout()">Switch</button></div>
+      <div style="display:flex;gap:6px">
+        <button class="hbtn" id="lockbtn" onclick="toggleAdmin()">&#128274;</button>
+        <button class="hbtn" onclick="doLogout()">Switch</button>
+      </div>
     </div>
     <div id="tabs">
-      <button class="tab active" onclick="switchTab('log')">Log</button>
-      <button class="tab" onclick="switchTab('sales')">Sales</button>
-      <button class="tab" onclick="switchTab('dashboard')">Dashboard</button>
-      <button class="tab" onclick="switchTab('mydata')">My Data</button>
-      <button class="tab" id="admin-tab" onclick="switchTab('admin')" style="display:none">Admin</button>
+      <button class="tab active" onclick="go('log')">Log</button>
+      <button class="tab" onclick="go('sales')">Sales</button>
+      <button class="tab" onclick="go('dash')">Dashboard</button>
+      <button class="tab" onclick="go('mine')">My Data</button>
+      <button class="tab" id="admin-tab" style="display:none" onclick="go('admin')">Admin</button>
     </div>
   </div>
   <div id="content"></div>
 </div>
-
 <script>
-var SUPA_URL="https://ooqxkrcjtwdnqhsqhzpr.supabase.co";
-var SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9vcXhrcmNqdHdkbnFoc3FoenByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4NDUyOTcsImV4cCI6MjA5MjQyMTI5N30.ssLjdyR68xHuHopkeV86d3Uc6CMrpqtN7HWeoNz6WpE";
-var MANAGER_ID="ID005"; // Kok Hwa is manager
+var SB="https://ooqxkrcjtwdnqhsqhzpr.supabase.co";
+var SK="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9vcXhrcmNqdHdkbnFoc3FoenByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4NDUyOTcsImV4cCI6MjA5MjQyMTI5N30.ssLjdyR68xHuHopkeV86d3Uc6CMrpqtN7HWeoNz6WpE";
+var ADMIN_PIN="44931";
+var adminUnlocked=false;
 
-// ── ACTIVITY TYPES ──────────────────────────────────────────────────────────
-var DEFAULT_ACTIVITIES=[
-  {type:"Connected Call",pts:10},
-  {type:"Make 1 Appt",pts:25},
-  {type:"FF/Opening Appt",pts:100},
-  {type:"Kopi Appt",pts:50},
-  {type:"Closing Appt",pts:150},
-  {type:"RS Closure",pts:150},
-  {type:"RS Lead",pts:20},
-  {type:"Refer x1 Lead",pts:50},
-  {type:"Recruit Appt",pts:200},
-  {type:"Addition of New Client",pts:25},
-  {type:"Roadshow",pts:0},
-  {type:"Admin Work",pts:0},
-  {type:"Social Media",pts:0},
-  {type:"Rest",pts:0}
+var ACTS_DEFAULT=[
+  {type:"Connected Call",pts:10},{type:"Make 1 Appt",pts:25},{type:"FF/Opening Appt",pts:100},
+  {type:"Kopi Appt",pts:50},{type:"Closing Appt",pts:150},{type:"RS Closure",pts:150},
+  {type:"RS Lead",pts:20},{type:"Refer x1 Lead",pts:50},{type:"Recruit Appt",pts:200},
+  {type:"Addition of New Client",pts:25},{type:"Roadshow",pts:0},{type:"Admin Work",pts:0},
+  {type:"Social Media",pts:0},{type:"Rest",pts:0}
 ];
 
-// ── PRODUCT CATEGORIES & PRODUCTS ──────────────────────────────────────────
-var DEFAULT_PRODUCTS={
-  "LIFE_TERM_ILP":   ["GT","GLM","GLA4"],
-  "LIFE_USD":        ["PWL_5_10to49","PWL_5_50to199","PWL_5_ABOVE200K"],
-  "RP_IUL":          ["IUL_5_BELOW200K","IUL_5_ABOVE200K","IUL_10_BELOW100K","IUL_10_ABOVE100K"],
-  "HEALTH_PLAN":     ["GSH","GTC","GSH_P","GSH_P_PRIME","GTC_PS","GTC_P_PRIME","G_HOSP_CASH","GHC","GTC_PLUS"],
-  "CI":              ["GCC","GCC_TOP3","GLA4_FULLPAY"],
-  "ACCIDENT":        ["GGP","GJP","GPA","ACCCARE","ESPP"],
+var PRODS_DEFAULT={
+  "LIFE_TERM_ILP":["GT","GLM","GLA4"],
+  "LIFE_USD":["PWL_5_10to49","PWL_5_50to199","PWL_5_ABOVE200K"],
+  "RP_IUL":["IUL_5_BELOW200K","IUL_5_ABOVE200K","IUL_10_BELOW100K","IUL_10_ABOVE100K"],
+  "HEALTH_PLAN":["GSH","GTC","GSH_P","GSH_P_PRIME","GTC_PS","GTC_P_PRIME","G_HOSP_CASH","GHC","GTC_PLUS"],
+  "CI":["GCC","GCC_TOP3","GLA4_FULLPAY"],
+  "ACCIDENT":["GGP","GJP","GPA","ACCCARE","ESPP"],
   "DISABILITY_INCOME":["GCSS","PAYASSURE","LIFESECURE"],
-  "INVESTMENT":      ["GWA"],
-  "RETIREMENT":      ["GRI"],
-  "SAVINGS":         ["GWM","FCB","GLP","FG"],
-  "SP":              ["PLR_5","PLR_5_100K","PLR_5A","PLR_5A_100K","PLR_USD","GSP","PR","GIA","GIA_CPF","GWM_SP","GMC","GII_BELOW100K","GII_ABOVE100K"],
-  "SP_USD":          ["LI_BELOW1MIL","LI_ABOVE1MIL","IUL_SP","PII","PWL_BELOW250K","PWL_ABOVE250K"],
-  "GTC_PLUS":        ["GTC_PLUS_ESSENTIAL"]
+  "INVESTMENT":["GWA"],
+  "RETIREMENT":["GRI"],
+  "SAVINGS":["GWM","FCB","GLP","FG"],
+  "SP":["PLR_5","PLR_5_100K","PLR_5A","PLR_5A_100K","PLR_USD","GSP","PR","GIA","GIA_CPF","GWM_SP","GMC","GII_BELOW100K","GII_ABOVE100K"],
+  "SP_USD":["LI_BELOW1MIL","LI_ABOVE1MIL","IUL_SP","PII","PWL_BELOW250K","PWL_ABOVE250K"],
+  "GTC_PLUS":["GTC_PLUS_ESSENTIAL"]
 };
 
-// ── COMMISSION RATES (Year 1 %) ─────────────────────────────────────────────
-// Format: number = flat %, array of [tenure,rate] pairs, or "GT_TABLE"
-// Health products marked with gst:true (9% GST embedded in premium)
-var DEFAULT_RATES={
-  // Life/Savings — tenure table (tenure:rate Year1)
-  "GT":         {table:{4:8.25,5:10.45,6:13.2,7:15.4,8:17.6,9:19.8,10:22,11:24.2,12:26.4,13:28.6,14:30.8,15:33,16:35.2,17:37.4,18:39.6,19:41.8,20:44,21:46.2,22:48.4,23:50.6,24:52.8,25:55}},
-  "GLM":        {table:{4:8.25,5:10.45,6:13.2,7:15.4,8:17.6,9:19.8,10:22,11:24.2,12:26.4,13:28.6,14:30.8,15:33,16:35.2,17:37.4,18:39.6,19:41.8,20:44,21:46.2}},
-  "GCC":        {table:{4:8.25,5:10.45,6:13.2,7:15.4,8:17.6,9:19.8,10:22,11:24.2,12:26.4,13:28.6,14:30.8,15:33,16:35.2,17:37.4,18:39.6,19:41.8,20:44,21:46.2,22:48.4}},
-  "GCC_TOP3":   {flat:40},
-  "GLA4_FULLPAY":{flat:48},
-  "GWM":        {table:{4:8.25,5:10.45,6:13.2,7:15.4,8:17.6,9:19.8,10:22,11:24.2,12:26.4,13:28.6,14:30.8,15:33,16:35.2,17:37.4,18:39.6,19:41.8,20:44,21:46.2,22:48.4,23:50.6,24:52.8,25:55}},
-  "FCB":        {table:{10:22,15:33,20:44}},
-  "GLP":        {table:{3:6.5}},
-  "FG":         {table:{15:22.5,20:30}},
-  "GWA":        {table:{5:15,10:30,15:35}},
-  "GRI":        {table:{5:9.9,10:20,15:31,20:44}},
-  "UL":         {table:{1:7.05,2:7.6,3:11.2,4:14.7,5:18.1,6:21.4,7:24.5,8:27.5,9:30.5,10:33.3}},
-  // PWL Life USD
-  "PWL_5_10to49":    {flat:10.45},
-  "PWL_5_50to199":   {flat:13.5},
-  "PWL_5_ABOVE200K": {flat:16},
-  // RP IUL
-  "IUL_5_BELOW200K": {flat:15},
-  "IUL_5_ABOVE200K": {flat:16.5},
-  "IUL_10_BELOW100K":{flat:25},
-  "IUL_10_ABOVE100K":{flat:28},
-  // Health — 9% GST on premium
-  "GSH":        {flat:30, gst:true},
-  "GSH_P":      {flat:10, gst:true},
-  "GSH_P_PRIME":{flat:10, gst:true},
-  "GTC":        {flat:15, gst:true},
-  "GTC_PS":     {flat:10, gst:true},
-  "GTC_P_PRIME":{flat:10, gst:true},
-  "G_HOSP_CASH":{flat:25, gst:true},
-  "GHC":        {flat:25, gst:true},
-  "GTC_PLUS":   {flat:20, gst:true},
-  "GTC_PLUS_ESSENTIAL":{flat:20,gst:true},
-  // Accident (no GST)
-  "GGP":        {flat:30},
-  "GJP":        {flat:30},
-  "GPA":        {flat:20},
-  "ACCCARE":    {flat:30},
-  "ESPP":       {flat:30},
-  // Disability Income
-  "GCSS":       {flat:40, gst:true},
-  "PAYASSURE":  {table:{4:5,5:6,6:8,7:10,8:13,9:15,10:18,11:21,12:23.5,13:26,14:28,15:30,16:32,17:34,18:36,19:38,20:40,21:42,22:44,23:46,24:48,25:50}},
-  "LIFESECURE": {flat:30},
-  // Single Premium
-  "GSP":        {flat:0.15},
-  "GWM_SP":     {flat:3},
-  "GMC":        {flat:4},
-  "PR":         {flat:2.5},
-  "GIA":        {flat:2},
-  "GIA_CPF":    {flat:0.5},
-  "PLG":        {flat:7.4},
-  "PLR_5":      {flat:3.7},
-  "PLR_5_100K": {flat:4.5},
-  "PLR_5A":     {flat:4.3},
-  "PLR_5A_100K":{flat:3.55},
-  "PLR_USD":    {flat:4.25},
-  "GII_BELOW100K":{flat:1.5},
-  "GII_ABOVE100K":{flat:1.6},
-  // SP USD
-  "LI_BELOW1MIL":{flat:4.25},
-  "LI_ABOVE1MIL":{flat:4.55},
-  "IUL_SP":     {flat:7.05},
-  "PII":        {flat:2.8},
-  "PWL_BELOW250K":{flat:4},
-  "PWL_ABOVE250K":{flat:6}
+var RATES_DEFAULT={
+  "GT":{table:{4:8.25,5:10.45,6:13.2,7:15.4,8:17.6,9:19.8,10:22,11:24.2,12:26.4,13:28.6,14:30.8,15:33,16:35.2,17:37.4,18:39.6,19:41.8,20:44,21:46.2,22:48.4,23:50.6,24:52.8,25:55}},
+  "GLM":{table:{4:8.25,5:10.45,6:13.2,7:15.4,8:17.6,9:19.8,10:22,11:24.2,12:26.4,13:28.6,14:30.8,15:33,16:35.2,17:37.4,18:39.6,19:41.8,20:44,21:46.2}},
+  "GCC":{table:{4:8.25,5:10.45,6:13.2,7:15.4,8:17.6,9:19.8,10:22,11:24.2,12:26.4,13:28.6,14:30.8,15:33,16:35.2,17:37.4,18:39.6,19:41.8,20:44,21:46.2,22:48.4}},
+  "GCC_TOP3":{flat:40},"GLA4_FULLPAY":{flat:48},
+  "GWM":{table:{4:8.25,5:10.45,6:13.2,7:15.4,8:17.6,9:19.8,10:22,11:24.2,12:26.4,13:28.6,14:30.8,15:33,16:35.2,17:37.4,18:39.6,19:41.8,20:44,21:46.2,22:48.4,23:50.6,24:52.8,25:55}},
+  "FCB":{table:{10:22,15:33,20:44}},"GLP":{table:{3:6.5}},"FG":{table:{15:22.5,20:30}},
+  "GWA":{table:{5:15,10:30,15:35}},"GRI":{table:{5:9.9,10:20,15:31,20:44}},
+  "UL":{table:{1:7.05,2:7.6,3:11.2,4:14.7,5:18.1,6:21.4,7:24.5,8:27.5,9:30.5,10:33.3}},
+  "PWL_5_10to49":{flat:10.45},"PWL_5_50to199":{flat:13.5},"PWL_5_ABOVE200K":{flat:16},
+  "IUL_5_BELOW200K":{flat:15},"IUL_5_ABOVE200K":{flat:16.5},"IUL_10_BELOW100K":{flat:25},"IUL_10_ABOVE100K":{flat:28},
+  "GSH":{flat:30,gst:true},"GSH_P":{flat:10,gst:true},"GSH_P_PRIME":{flat:10,gst:true},
+  "GTC":{flat:15,gst:true},"GTC_PS":{flat:10,gst:true},"GTC_P_PRIME":{flat:10,gst:true},
+  "G_HOSP_CASH":{flat:25,gst:true},"GHC":{flat:25,gst:true},"GTC_PLUS":{flat:20,gst:true},"GTC_PLUS_ESSENTIAL":{flat:20,gst:true},
+  "GGP":{flat:30},"GJP":{flat:30},"GPA":{flat:20},"ACCCARE":{flat:30},"ESPP":{flat:30},
+  "GCSS":{flat:40,gst:true},"PAYASSURE":{table:{4:5,5:6,6:8,7:10,8:13,9:15,10:18,11:21,12:23.5,13:26,14:28,15:30,16:32,17:34,18:36,19:38,20:40,21:42,22:44,23:46,24:48,25:50}},
+  "LIFESECURE":{flat:30},"GSP":{flat:0.15},"GWM_SP":{flat:3},"GMC":{flat:4},"PR":{flat:2.5},
+  "GIA":{flat:2},"GIA_CPF":{flat:0.5},"PLG":{flat:7.4},"PLR_5":{flat:3.7},"PLR_5_100K":{flat:4.5},
+  "PLR_5A":{flat:4.3},"PLR_5A_100K":{flat:3.55},"PLR_USD":{flat:4.25},
+  "GII_BELOW100K":{flat:1.5},"GII_ABOVE100K":{flat:1.6},
+  "LI_BELOW1MIL":{flat:4.25},"LI_ABOVE1MIL":{flat:4.55},"IUL_SP":{flat:7.05},"PII":{flat:2.8},
+  "PWL_BELOW250K":{flat:4},"PWL_ABOVE250K":{flat:6}
 };
 
-function getActivities(){
-  var raw=localStorage.getItem("cia500_activities");
-  return raw?JSON.parse(raw):DEFAULT_ACTIVITIES;
-}
-function getProducts(){
-  var raw=localStorage.getItem("cia500_products");
-  return raw?JSON.parse(raw):DEFAULT_PRODUCTS;
-}
-function getRates(){
-  var raw=localStorage.getItem("cia500_rates");
-  return raw?JSON.parse(raw):DEFAULT_RATES;
+function getActs(){var r=localStorage.getItem("c5_acts");return r?JSON.parse(r):ACTS_DEFAULT;}
+function getProds(){var r=localStorage.getItem("c5_prods");return r?JSON.parse(r):PRODS_DEFAULT;}
+function getRates(){var r=localStorage.getItem("c5_rates");return r?JSON.parse(r):RATES_DEFAULT;}
+function getNudges(){var r=localStorage.getItem("c5_nudges");return r?JSON.parse(r):{};}
+function saveNudge(aid,byName){
+  var n=getNudges(),t=todayStr();
+  if(!n[t])n[t]={};
+  var now=new Date();
+  n[t][aid]={by:byName,time:now.getHours()+":"+pad(now.getMinutes())};
+  Object.keys(n).forEach(function(d){if(d<addDays(t,-7))delete n[d];});
+  localStorage.setItem("c5_nudges",JSON.stringify(n));
 }
 
 function calcComm(pdt,premium,tenure){
-  var rates=getRates();
-  var r=rates[pdt.toUpperCase()]||rates[pdt];
+  var rates=getRates(),r=rates[pdt]||rates[pdt.toUpperCase()];
   if(!r)return{comm:0,gst:false,rate:0};
-  var gst=r.gst?0.09:0;
-  var base=premium/(1+gst);
-  var rate=0;
+  var gst=r.gst?0.09:0,base=premium/(1+gst),rate=0;
   if(r.flat!==undefined){rate=r.flat;}
   else if(r.table){
     var t=parseInt(tenure);
     if(r.table[t]!==undefined){rate=r.table[t];}
     else{
-      // find closest tenure
-      var keys=Object.keys(r.table).map(Number).sort(function(a,b){return a-b;});
-      var closest=keys.reduce(function(prev,cur){return Math.abs(cur-t)<Math.abs(prev-t)?cur:prev;});
-      rate=r.table[closest];
+      var keys=Object.keys(r.table).map(Number).sort(function(a,b){return Math.abs(a-t)-Math.abs(b-t);});
+      rate=r.table[keys[0]]||0;
     }
   }
-  var comm=Math.round(base*(rate/100)*100)/100;
-  return{comm:comm,gst:gst>0,rate:rate};
+  return{comm:Math.round(base*(rate/100)*100)/100,gst:gst>0,rate:rate};
 }
 
-// ── API ──────────────────────────────────────────────────────────────────────
-function api(method,table,body,params){
-  var url=SUPA_URL+"/rest/v1/"+table+(params?"?"+params:"");
-  return fetch(url,{
-    method:method||"GET",
-    headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+SUPA_KEY,"Content-Type":"application/json","Prefer":method==="POST"?"return=representation":""},
-    body:body?JSON.stringify(body):undefined
-  }).then(function(r){return r.json();});
+function api(m,tbl,body,params){
+  var url=SB+"/rest/v1/"+tbl+(params?"?"+params:"");
+  return fetch(url,{method:m||"GET",headers:{"apikey":SK,"Authorization":"Bearer "+SK,"Content-Type":"application/json","Prefer":m==="POST"?"return=representation":""},body:body?JSON.stringify(body):undefined}).then(function(r){return r.json();});
 }
+function del(tbl,q){return fetch(SB+"/rest/v1/"+tbl+"?"+q,{method:"DELETE",headers:{"apikey":SK,"Authorization":"Bearer "+SK}});}
+function patch(tbl,q,body){return fetch(SB+"/rest/v1/"+tbl+"?"+q,{method:"PATCH",headers:{"apikey":SK,"Authorization":"Bearer "+SK,"Content-Type":"application/json","Prefer":"return=minimal"},body:JSON.stringify(body)});}
 
 function pad(n){return n<10?"0"+n:""+n;}
 function todayStr(){var d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());}
-function fmtDate(d){return new Date(d+"T00:00:00").toLocaleDateString("en-SG",{day:"numeric",month:"short"});}
-function fmtMoney(n){return"$"+Number(n||0).toLocaleString("en-SG",{minimumFractionDigits:2,maximumFractionDigits:2});}
-function esc(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function addDays(d,n){var p=d.split("-");var dt=new Date(+p[0],+p[1]-1,+p[2]);dt.setDate(dt.getDate()+n);return dt.getFullYear()+"-"+pad(dt.getMonth()+1)+"-"+pad(dt.getDate());}
+function fmtD(d){return new Date(d+"T00:00:00").toLocaleDateString("en-SG",{day:"numeric",month:"short"});}
+function fmtM(n){return"$"+Number(n||0).toLocaleString("en-SG",{minimumFractionDigits:2,maximumFractionDigits:2});}
+function esc(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");}
+function chk(){return'<svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3L3.5 5.5L8 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';}
 
-// ── LOGIN ────────────────────────────────────────────────────────────────────
-var curAssociate=null,curTab="log";
+var curUser=null,curTab="log";
 
 function loadAssociates(){
   api("GET","associates","","order=name.asc&select=id,name,active").then(function(rows){
-    var sel=document.getElementById("sel-associate");
+    var sel=document.getElementById("sel-name");
     (rows||[]).filter(function(a){return a.active!==false;}).forEach(function(a){
-      var o=document.createElement("option");o.value=a.id;o.textContent=a.name;
-      sel.appendChild(o);
+      var o=document.createElement("option");o.value=a.id;o.textContent=a.name;sel.appendChild(o);
     });
-    var saved=localStorage.getItem("cia500_user");
-    if(saved){try{curAssociate=JSON.parse(saved);showApp();}catch(e){}}
+    var saved=localStorage.getItem("c5_user");
+    if(saved){try{curUser=JSON.parse(saved);showApp();}catch(e){}}
   });
 }
+
 function doLogin(){
-  var sel=document.getElementById("sel-associate");
+  var sel=document.getElementById("sel-name");
   var id=sel.value,name=sel.options[sel.selectedIndex]&&sel.options[sel.selectedIndex].text;
   if(!id){document.getElementById("sel-err").textContent="Please select your name.";return;}
-  curAssociate={id:id,name:name};
-  localStorage.setItem("cia500_user",JSON.stringify(curAssociate));
+  curUser={id:id,name:name};
+  localStorage.setItem("c5_user",JSON.stringify(curUser));
   showApp();
 }
-function doLogout(){
-  curAssociate=null;localStorage.removeItem("cia500_user");
-  document.getElementById("app").style.display="none";
-  document.getElementById("splash").style.display="flex";
+function doLogout(){curUser=null;localStorage.removeItem("c5_user");document.getElementById("app").style.display="none";document.getElementById("splash").style.display="flex";}
+function showApp(){document.getElementById("splash").style.display="none";document.getElementById("app").style.display="block";document.getElementById("whoami").textContent=curUser.name;go("log");}
+
+function toggleAdmin(){
+  if(adminUnlocked){adminUnlocked=false;document.getElementById("admin-tab").style.display="none";document.getElementById("lockbtn").textContent="\u{1F512}";if(curTab==="admin")go("log");return;}
+  var pin=prompt("Enter admin PIN:");
+  if(!pin)return;
+  if(pin===ADMIN_PIN){adminUnlocked=true;document.getElementById("admin-tab").style.display="";document.getElementById("lockbtn").textContent="\u{1F513}";}
+  else alert("Incorrect PIN.");
 }
-function showApp(){
-  document.getElementById("splash").style.display="none";
-  document.getElementById("app").style.display="block";
-  document.getElementById("whoami").textContent=curAssociate.name;
-  switchTab("log");
-}
-function switchTab(t){
+
+function go(t){
   curTab=t;
-  document.querySelectorAll(".tab").forEach(function(el){
-    var match=(el.textContent.toLowerCase()===t)||(t==="mydata"&&el.textContent==="My Data");
-    el.classList.toggle("active",match);
-  });
+  document.querySelectorAll(".tab").forEach(function(el){el.classList.toggle("active",el.textContent.toLowerCase()===t||(t==="mine"&&el.textContent==="My Data")||(t==="dash"&&el.textContent==="Dashboard")||(t==="admin"&&el.textContent==="Admin"));});
   render();
 }
 function render(){
   if(curTab==="log")renderLog();
   else if(curTab==="sales")renderSales();
-  else if(curTab==="dashboard")renderDashboard();
-  else if(curTab==="mydata")renderMyData();
+  else if(curTab==="dash")renderDash();
+  else if(curTab==="mine")renderMine();
   else renderAdmin();
 }
 
-// ── LOG ACTIVITY ──────────────────────────────────────────────────────────────
+// LOG
 function renderLog(){
-  var acts=getActivities();
-  var html='<div class="card"><div class="card-head"><div class="card-title">Log Activity</div><div class="card-sub">'+todayStr()+'</div></div>';
-  html+='<div class="form-group"><div class="form-label">Activity</div><select class="form-select" id="act-type">';
-  acts.forEach(function(a){html+='<option value="'+esc(a.type)+'|'+a.pts+'">'+esc(a.type)+' ('+a.pts+' pts)</option>';});
-  html+='</select></div>';
-  html+='<div class="form-group"><div class="form-label">Date</div><input type="date" class="form-input" id="act-date" value="'+todayStr()+'"/></div>';
-  html+='</div><button class="submit-btn" onclick="submitActivity()">Log Activity</button>';
-  html+='<div id="act-msg"></div>';
-  html+='<div class="section-label">Today\'s Log</div>';
-  html+='<div class="card" id="act-list"><div class="loading">Loading…</div></div>';
-  document.getElementById("content").innerHTML=html;
-  loadTodayActivities();
+  var acts=getActs();
+  var h='<div class="card"><div class="card-head"><div class="card-title">Log Activity</div><div class="card-sub">'+todayStr()+'</div></div>';
+  h+='<div class="fg"><div class="fl">Activity</div><select class="fs" id="act-sel">';
+  acts.forEach(function(a){h+='<option value="'+esc(a.type)+'|'+a.pts+'">'+esc(a.type)+' ('+a.pts+' pts)</option>';});
+  h+='</select></div><div class="fg"><div class="fl">Date</div><input type="date" class="fi" id="act-date" value="'+todayStr()+'"/></div></div>';
+  h+='<button class="btn" onclick="submitAct()">Log Activity</button><div id="act-msg"></div>';
+  h+='<div class="sec-lbl">Today</div><div class="card" id="act-list"><div class="ld">Loading...</div></div>';
+  document.getElementById("content").innerHTML=h;
+  loadTodayActs();
 }
-function loadTodayActivities(){
-  api("GET","activities","","select=*&associate_id=eq."+curAssociate.id+"&activity_date=eq."+todayStr()+"&order=created_at.desc").then(function(rows){
+function loadTodayActs(){
+  api("GET","activities","","select=*&associate_id=eq."+curUser.id+"&activity_date=eq."+todayStr()+"&order=created_at.desc").then(function(rows){
     var el=document.getElementById("act-list");if(!el)return;
-    if(!rows||!rows.length){el.innerHTML='<div class="empty">No activities logged today.</div>';return;}
+    if(!rows||!rows.length){el.innerHTML='<div class="emp">Nothing logged today.</div>';return;}
     var total=rows.reduce(function(a,r){return a+(r.points||0);},0);
-    var html='<div class="list-row"><span class="list-name" style="color:#555">Total today</span><span class="list-val">'+total+' pts</span></div>';
+    var h='<div class="lr"><span class="ln" style="color:#555">Total today</span><span class="lv">'+total+' pts</span></div>';
     rows.forEach(function(r){
-      html+='<div class="act-row"><div style="flex:1"><div class="act-type">'+esc(r.activity_type)+'</div><div class="act-date">'+fmtDate(r.activity_date)+'</div></div>'
-        +'<span class="act-pts">'+r.points+' pts</span>'
-        +'<button class="del-btn" onclick="delActivity(\''+r.id+'\')">×</button></div>';
+      h+='<div class="ar"><div style="flex:1"><div class="at">'+esc(r.activity_type)+'</div><div class="ad">'+fmtD(r.activity_date)+'</div></div>'
+        +'<span class="ap">'+r.points+' pts</span>'
+        +'<button class="db" onclick="delAct(\''+r.id+'\')">x</button></div>';
     });
-    el.innerHTML=html;
+    el.innerHTML=h;
   });
 }
-function submitActivity(){
-  var val=document.getElementById("act-type").value.split("|");
+function submitAct(){
+  var v=document.getElementById("act-sel").value.split("|");
   var date=document.getElementById("act-date").value||todayStr();
   var msg=document.getElementById("act-msg");
-  api("POST","activities",{associate_id:curAssociate.id,activity_type:val[0],points:parseInt(val[1]),activity_date:date}).then(function(r){
-    if(r&&r[0]&&r[0].id){
-      msg.innerHTML='<div class="msg">✓ Logged: '+esc(val[0])+'</div>';
-      loadTodayActivities();setTimeout(function(){msg.innerHTML="";},2000);
-    }else{msg.innerHTML='<div class="msg err">Error. Try again.</div>';}
+  api("POST","activities",{associate_id:curUser.id,activity_type:v[0],points:parseInt(v[1]),activity_date:date}).then(function(r){
+    if(r&&r[0]&&r[0].id){msg.innerHTML='<div class="ms">Logged: '+esc(v[0])+'</div>';loadTodayActs();setTimeout(function(){msg.innerHTML="";},2000);}
+    else msg.innerHTML='<div class="ms er">Error. Try again.</div>';
   });
 }
-function delActivity(id){
-  if(!confirm("Delete this activity?"))return;
-  fetch(SUPA_URL+"/rest/v1/activities?id=eq."+id,{method:"DELETE",headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+SUPA_KEY}}).then(function(){loadTodayActivities();});
-}
+function delAct(id){if(!confirm("Delete?"))return;del("activities","id=eq."+id).then(function(){loadTodayActs();});}
 
-// ── LOG SALE ──────────────────────────────────────────────────────────────────
+// SALES
 function renderSales(){
-  var products=getProducts();
-  var cats=Object.keys(products);
-  var html='<div class="card"><div class="card-head"><div class="card-title">Log Sale</div><div class="card-sub">FYC auto-calculated</div></div>';
-  html+='<div class="form-group"><div class="form-label">Product Type</div><select class="form-select" id="pdt-cat" onchange="updatePdtList()">';
-  cats.forEach(function(c){html+='<option value="'+c+'">'+c.replace(/_/g," ")+'</option>';});
-  html+='</select></div>';
-  html+='<div class="form-group"><div class="form-label">Product (PDT)</div><select class="form-select" id="pdt-name" onchange="previewComm()"></select></div>';
-  html+='<div id="gst-note" class="gst-note" style="display:none">⚠ This product includes 9% GST in the premium</div>';
-  html+='<div class="form-group"><div class="form-label">Premium ($)</div><input type="number" class="form-input" id="pdt-premium" placeholder="0.00" oninput="previewComm()"/></div>';
-  html+='<div class="form-group" id="tenure-group"><div class="form-label">Tenure (years)</div><input type="number" class="form-input" id="pdt-tenure" placeholder="e.g. 25" value="25" oninput="previewComm()"/></div>';
-  html+='<div class="form-group"><div class="form-label">Sale Date</div><input type="date" class="form-input" id="pdt-date" value="'+todayStr()+'"/></div>';
-  html+='</div>';
-  html+='<div class="comm-result" id="comm-preview"><div class="comm-amount">$0.00</div><div class="comm-label">Estimated FYC Commission</div><div class="comm-note" id="comm-note"></div></div>';
-  html+='<button class="submit-btn" onclick="submitSale()">Log Sale</button>';
-  html+='<div id="sale-msg"></div>';
-  html+='<div class="section-label">My Recent Sales</div>';
-  html+='<div class="card" id="sale-list"><div class="loading">Loading…</div></div>';
-  document.getElementById("content").innerHTML=html;
-  updatePdtList();
-  loadMySales();
+  var prods=getProds(),cats=Object.keys(prods);
+  var h='<div class="card"><div class="card-head"><div class="card-title">Log Sale</div><div class="card-sub">FYC auto-calculated</div></div>';
+  h+='<div class="fg"><div class="fl">Product Type</div><select class="fs" id="pdt-cat" onchange="updatePdts()">';
+  cats.forEach(function(c){h+='<option>'+c+'</option>';});
+  h+='</select></div><div class="fg"><div class="fl">Product</div><select class="fs" id="pdt-name" onchange="prevComm()"></select></div>';
+  h+='<div id="gst-note" class="gn" style="display:none">This product has 9% GST in the premium</div>';
+  h+='<div class="fg"><div class="fl">Premium ($)</div><input type="number" class="fi" id="pdt-prem" placeholder="0.00" oninput="prevComm()"/></div>';
+  h+='<div class="fg" id="tenure-grp"><div class="fl">Tenure (years)</div><input type="number" class="fi" id="pdt-ten" value="25" oninput="prevComm()"/></div>';
+  h+='<div class="fg"><div class="fl">Sale Date</div><input type="date" class="fi" id="pdt-date" value="'+todayStr()+'"/></div></div>';
+  h+='<div class="cr"><div class="ca" id="comm-amt">$0.00</div><div class="cn">Estimated FYC</div><div class="cn2" id="comm-note"></div></div>';
+  h+='<button class="btn" onclick="submitSale()">Log Sale</button><div id="sale-msg"></div>';
+  h+='<div class="sec-lbl">My Recent Sales</div><div class="card" id="sale-list"><div class="ld">Loading...</div></div>';
+  document.getElementById("content").innerHTML=h;
+  updatePdts();loadMySales();
 }
-function updatePdtList(){
-  var cat=document.getElementById("pdt-cat").value;
-  var products=getProducts();
-  var pdts=products[cat]||[];
-  var sel=document.getElementById("pdt-name");
-  sel.innerHTML="";
+function updatePdts(){
+  var cat=document.getElementById("pdt-cat").value,prods=getProds(),pdts=prods[cat]||[];
+  var sel=document.getElementById("pdt-name");sel.innerHTML="";
   pdts.forEach(function(p){var o=document.createElement("option");o.value=p;o.textContent=p;sel.appendChild(o);});
-  previewComm();
+  prevComm();
 }
-function previewComm(){
+function prevComm(){
   var pdt=document.getElementById("pdt-name")?document.getElementById("pdt-name").value:"";
-  var premium=parseFloat(document.getElementById("pdt-premium")?document.getElementById("pdt-premium").value:0)||0;
-  var tenure=parseInt(document.getElementById("pdt-tenure")?document.getElementById("pdt-tenure").value:1)||1;
-  var res=calcComm(pdt,premium,tenure);
-  var el=document.getElementById("comm-preview");
-  if(el){el.querySelector(".comm-amount").textContent=fmtMoney(res.comm);}
-  var note=document.getElementById("comm-note");
-  if(note)note.textContent=res.rate?"Rate: "+res.rate+"% (Year 1)"+(res.gst?" · GST 9% included":""):"Rate unknown — check admin";
-  var gstNote=document.getElementById("gst-note");
-  if(gstNote)gstNote.style.display=res.gst?"block":"none";
-  // Show/hide tenure for flat rate products
-  var rates=getRates();
-  var r=rates[pdt];
-  var tenureGroup=document.getElementById("tenure-group");
-  if(tenureGroup)tenureGroup.style.display=(r&&r.flat!==undefined)?"none":"block";
+  var prem=parseFloat(document.getElementById("pdt-prem")?document.getElementById("pdt-prem").value:0)||0;
+  var ten=parseInt(document.getElementById("pdt-ten")?document.getElementById("pdt-ten").value:1)||1;
+  var res=calcComm(pdt,prem,ten);
+  var el=document.getElementById("comm-amt");if(el)el.textContent=fmtM(res.comm);
+  var n=document.getElementById("comm-note");if(n)n.textContent=res.rate?"Rate: "+res.rate+"% Y1"+(res.gst?" + 9% GST":""):"";
+  var gn=document.getElementById("gst-note");if(gn)gn.style.display=res.gst?"block":"none";
+  var tg=document.getElementById("tenure-grp");
+  var rates=getRates(),r=rates[pdt];
+  if(tg)tg.style.display=(r&&r.flat!==undefined)?"none":"block";
 }
 function submitSale(){
   var pdt=document.getElementById("pdt-name").value;
-  var pdtType=document.getElementById("pdt-cat").value;
-  var premium=parseFloat(document.getElementById("pdt-premium").value)||0;
-  var tenure=parseInt(document.getElementById("pdt-tenure").value)||1;
+  var cat=document.getElementById("pdt-cat").value;
+  var prem=parseFloat(document.getElementById("pdt-prem").value)||0;
+  var ten=parseInt(document.getElementById("pdt-ten").value)||1;
   var date=document.getElementById("pdt-date").value||todayStr();
   var msg=document.getElementById("sale-msg");
-  if(!premium){msg.innerHTML='<div class="msg err">Enter a premium amount.</div>';return;}
-  var res=calcComm(pdt,premium,tenure);
-  api("POST","sales",{associate_id:curAssociate.id,pdt_type:pdtType,pdt:pdt,premium:premium,tenure:tenure,gst:res.gst?0.09:0,commission:res.comm,sale_date:date}).then(function(r){
+  if(!prem){msg.innerHTML='<div class="ms er">Enter premium amount.</div>';return;}
+  var res=calcComm(pdt,prem,ten);
+  api("POST","sales",{associate_id:curUser.id,pdt_type:cat,pdt:pdt,premium:prem,tenure:ten,gst:res.gst?0.09:0,commission:res.comm,sale_date:date}).then(function(r){
     if(r&&r[0]&&r[0].id){
-      msg.innerHTML='<div class="msg">✓ Sale logged — FYC: '+fmtMoney(res.comm)+'</div>';
-      loadMySales();setTimeout(function(){msg.innerHTML="";},2500);
-      document.getElementById("pdt-premium").value="";
-      previewComm();
-    }else{msg.innerHTML='<div class="msg err">Error. Try again.</div>';}
+      msg.innerHTML='<div class="ms">Sale logged - FYC: '+fmtM(res.comm)+'</div>';
+      loadMySales();document.getElementById("pdt-prem").value="";prevComm();
+      setTimeout(function(){msg.innerHTML="";},2500);
+    }else msg.innerHTML='<div class="ms er">Error. Try again.</div>';
   });
 }
 function loadMySales(){
-  api("GET","sales","","select=*&associate_id=eq."+curAssociate.id+"&order=sale_date.desc&limit=20").then(function(rows){
+  api("GET","sales","","select=*&associate_id=eq."+curUser.id+"&order=sale_date.desc&limit=20").then(function(rows){
     var el=document.getElementById("sale-list");if(!el)return;
-    if(!rows||!rows.length){el.innerHTML='<div class="empty">No sales logged yet.</div>';return;}
+    if(!rows||!rows.length){el.innerHTML='<div class="emp">No sales yet.</div>';return;}
     var total=rows.reduce(function(a,r){return a+(r.commission||0);},0);
-    var html='<div class="list-row"><span class="list-name" style="color:#555">Total FYC</span><span class="list-val">'+fmtMoney(total)+'</span></div>';
+    var h='<div class="lr"><span class="ln" style="color:#555">Total FYC</span><span class="lv">'+fmtM(total)+'</span></div>';
     rows.forEach(function(r){
-      html+='<div class="act-row"><div style="flex:1">'
-        +'<div class="act-type">'+esc(r.pdt)+' · '+esc(r.pdt_type)+'</div>'
-        +'<div class="act-date">'+fmtMoney(r.premium)+' · '+r.tenure+'yr · '+fmtDate(r.sale_date)+'</div></div>'
-        +'<span class="act-pts">'+fmtMoney(r.commission)+'</span>'
-        +'<button class="del-btn" onclick="delSale(\''+r.id+'\')">×</button></div>';
+      h+='<div class="ar"><div style="flex:1"><div class="at">'+esc(r.pdt)+' - '+esc(r.pdt_type)+'</div>'
+        +'<div class="ad">'+fmtM(r.premium)+' - '+r.tenure+'yr - '+fmtD(r.sale_date)+'</div></div>'
+        +'<span class="ap">'+fmtM(r.commission)+'</span>'
+        +'<button class="db" onclick="delSale(\''+r.id+'\')">x</button></div>';
     });
-    el.innerHTML=html;
+    el.innerHTML=h;
   });
 }
-function delSale(id){
-  if(!confirm("Delete this sale?"))return;
-  fetch(SUPA_URL+"/rest/v1/sales?id=eq."+id,{method:"DELETE",headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+SUPA_KEY}}).then(function(){loadMySales();});
-}
+function delSale(id){if(!confirm("Delete?"))return;del("sales","id=eq."+id).then(function(){loadMySales();});}
 
-// ── DASHBOARD ─────────────────────────────────────────────────────────────────
-function renderDashboard(){
-  document.getElementById("content").innerHTML='<div class="loading">Loading dashboard…</div>';
+// DASHBOARD
+function renderDash(){
+  document.getElementById("content").innerHTML='<div class="ld">Loading...</div>';
   Promise.all([
-    api("GET","associates","","select=id,name,target&order=name.asc&active=not.eq.false"),
+    api("GET","associates","","select=id,name,target,phone&order=name.asc"),
     api("GET","sales","","select=associate_id,commission"),
     api("GET","activities","","select=associate_id,points,activity_date")
   ]).then(function(res){
-    var assocs=res[0]||[],sales=res[1]||[],acts=res[2]||[];
-    var today=todayStr();
-    var fyc={},pts={},ptsTdy={};
-    assocs.forEach(function(a){fyc[a.id]=0;pts[a.id]=0;ptsTdy[a.id]=0;});
+    var assocs=(res[0]||[]).filter(function(a){return a.active!==false;});
+    var sales=res[1]||[],acts=res[2]||[],today=todayStr();
+    var fyc={},pts={},ptd={};
+    assocs.forEach(function(a){fyc[a.id]=0;pts[a.id]=0;ptd[a.id]=0;});
     sales.forEach(function(s){fyc[s.associate_id]=(fyc[s.associate_id]||0)+(s.commission||0);});
-    acts.forEach(function(a){
-      pts[a.associate_id]=(pts[a.associate_id]||0)+(a.points||0);
-      if(a.activity_date===today)ptsTdy[a.associate_id]=(ptsTdy[a.associate_id]||0)+(a.points||0);
-    });
+    acts.forEach(function(a){pts[a.associate_id]=(pts[a.associate_id]||0)+(a.points||0);if(a.activity_date===today)ptd[a.associate_id]=(ptd[a.associate_id]||0)+(a.points||0);});
     var sorted=assocs.slice().sort(function(a,b){return(fyc[b.id]||0)-(fyc[a.id]||0);});
-    var maxFyc=Math.max.apply(null,sorted.map(function(a){return fyc[a.id]||0;})||[1]);
-    if(maxFyc===0)maxFyc=1;
-    var totalFyc=sales.reduce(function(a,s){return a+(s.commission||0);},0);
-    var totalPts=Object.values(pts).reduce(function(a,b){return a+b;},0);
-    var todayPts=Object.values(ptsTdy).reduce(function(a,b){return a+b;},0);
+    var maxF=Math.max.apply(null,sorted.map(function(a){return fyc[a.id]||0;}).concat([1]));
+    var totF=sales.reduce(function(a,s){return a+(s.commission||0);},0);
+    var totP=Object.values(pts).reduce(function(a,b){return a+b;},0);
+    var todP=Object.values(ptd).reduce(function(a,b){return a+b;},0);
 
-    var html='<div class="stat-grid">'
-      +'<div class="stat-box"><div class="stat-label">Team FYC</div><div class="stat-val gold">'+fmtMoney(totalFyc)+'</div></div>'
-      +'<div class="stat-box"><div class="stat-label">Total Pts</div><div class="stat-val">'+totalPts+'</div></div>'
-      +'<div class="stat-box"><div class="stat-label">Today Pts</div><div class="stat-val">'+todayPts+'</div></div>'
-      +'</div>';
+    var h='<div class="sg"><div class="sb"><div class="sl">Team FYC</div><div class="sv g">'+fmtM(totF)+'</div></div>'
+      +'<div class="sb"><div class="sl">Total Pts</div><div class="sv">'+totP+'</div></div>'
+      +'<div class="sb"><div class="sl">Today Pts</div><div class="sv">'+todP+'</div></div></div>';
 
-    html+='<div class="section-label">FYC — Year to Date</div><div class="card"><div class="chart-wrap">';
+    h+='<div class="sec-lbl">FYC - Year to Date</div><div class="card"><div class="cw">';
     sorted.forEach(function(a){
-      var pct=Math.round((fyc[a.id]||0)/maxFyc*100);
-      var goalPct=a.target>0?Math.min(100,Math.round((fyc[a.id]||0)/a.target*100)):0;
-      html+='<div class="chart-bar-row"><div class="chart-name">'+esc(a.name)+'</div>'
-        +'<div class="chart-bar-bg"><div class="chart-bar-inner" style="width:'+pct+'%">'+fmtMoney(fyc[a.id]||0)+'</div></div></div>';
-      html+='<div style="display:flex;align-items:center;gap:8px;padding:0 0 4px 70px">'
-        +'<div class="bar-wrap" style="flex:1;margin:0"><div class="bar-fill" style="width:'+goalPct+'%;background:#2a4a1a"></div></div>'
-        +'<span style="font-size:9px;color:#444;min-width:38px">'+goalPct+'% of target</span></div>';
+      var pct=Math.round((fyc[a.id]||0)/maxF*100);
+      var gp=a.target>0?Math.min(100,Math.round((fyc[a.id]||0)/a.target*100)):0;
+      h+='<div class="cbr"><div class="cnm">'+esc(a.name)+'</div>'
+        +'<div class="cbb"><div class="cbi" style="width:'+pct+'%">'+fmtM(fyc[a.id]||0)+'</div></div></div>';
+      h+='<div style="display:flex;align-items:center;gap:8px;padding:0 0 4px 70px">'
+        +'<div class="bw" style="flex:1;margin:0"><div class="bf" style="width:'+gp+'%;background:#2a4a1a"></div></div>'
+        +'<span style="font-size:9px;color:#444;min-width:38px">'+gp+'% goal</span></div>';
     });
-    html+='</div></div>';
+    h+='</div></div>';
 
-    html+='<div class="section-label">Points Leaderboard</div><div class="card">';
-    var ptsSorted=assocs.slice().sort(function(a,b){return(pts[b.id]||0)-(pts[a.id]||0);});
-    ptsSorted.forEach(function(a,i){
-      html+='<div class="list-row"><div class="rank">'+(i+1)+'</div>'
-        +'<div class="list-name">'+esc(a.name)+'</div>'
-        +'<div><div class="list-val">'+(pts[a.id]||0)+' pts</div>'
-        +'<div class="list-sub">Today: '+(ptsTdy[a.id]||0)+'</div></div></div>';
+    h+='<div class="sec-lbl">Points Board</div><div class="card">';
+    assocs.slice().sort(function(a,b){return(pts[b.id]||0)-(pts[a.id]||0);}).forEach(function(a,i){
+      h+='<div class="lr"><div class="rk">'+(i+1)+'</div><div class="ln">'+esc(a.name)+'</div>'
+        +'<div><div class="lv">'+(pts[a.id]||0)+' pts</div><div class="ls">Today: '+(ptd[a.id]||0)+'</div></div></div>';
     });
-    // Nudge section
-    html+='<div class="section-label">Today\'s Nudge Status</div><div class="card">';
-    var nudges=getNudges();
-    var today2=todayStr();
-    assocs.forEach(function(a){
-      var hasLogged=ptsTdy[a.id]>0;
-      var nudge=nudges[today2]&&nudges[today2][a.id];
-      var status,btnHtml="";
-      if(hasLogged){
-        status='<span style="font-size:11px;color:#4caf50;font-weight:600">✓ Logged</span>';
-      } else if(nudge){
-        status='<span style="font-size:11px;color:#f5a623">⚠ Nudged by '+esc(nudge.by)+' at '+nudge.time+'</span>';
-        btnHtml='<button onclick="sendNudge(''+a.id+'',''+esc(a.name)+'',''+esc(a.phone||"")+'',true)" style="padding:4px 8px;border:1px solid #333;border-radius:6px;background:transparent;color:#555;font-size:10px;cursor:pointer">Nudge again</button>';
-      } else {
-        status='<span style="font-size:11px;color:#e74c3c">✗ Not logged</span>';
-        if(a.id!==curAssociate.id){
-          btnHtml='<button onclick="sendNudge(''+a.id+'',''+esc(a.name)+'',''+esc(a.phone||"")+'',false)" style="padding:4px 10px;border:1px solid #f5a623;border-radius:6px;background:transparent;color:#f5a623;font-size:10px;cursor:pointer;font-weight:600">Nudge 💬</button>';
-        }
+    h+='</div>';
+
+    h+='<div class="sec-lbl">Nudge Status</div><div class="card" id="nudge-wrap"></div>';
+    h+='<div style="height:20px"></div>';
+    document.getElementById("content").innerHTML=h;
+    buildNudgeList(assocs,ptd);
+  });
+}
+
+function buildNudgeList(assocs,ptd){
+  var el=document.getElementById("nudge-wrap");if(!el)return;
+  var nudges=getNudges(),t=todayStr(),h="";
+  assocs.forEach(function(a){
+    var logged=ptd[a.id]>0;
+    var nudge=nudges[t]&&nudges[t][a.id];
+    var statHtml,btnHtml="";
+    if(logged){
+      statHtml='<span style="font-size:11px;color:#4caf50;font-weight:600">Logged</span>';
+    } else if(nudge){
+      statHtml='<span style="font-size:11px;color:#f5a623">Nudged '+nudge.time+'</span>';
+      if(a.id!==curUser.id){
+        btnHtml='<button data-aid="'+esc(a.id)+'" data-aname="'+esc(a.name)+'" data-aphone="'+esc(a.phone||"")+'" data-again="1" onclick="doNudge(this)" style="padding:4px 8px;border:1px solid #333;border-radius:6px;background:transparent;color:#555;font-size:10px;cursor:pointer">Again</button>';
       }
-      html+='<div class="list-row"><div class="list-name">'+esc(a.name)+'</div>'
-        +'<div style="display:flex;align-items:center;gap:8px">'+status+btnHtml+'</div></div>';
-    });
-    html+='</div><div style="height:20px"></div>';
-
-    document.getElementById("content").innerHTML=html;
+    } else {
+      statHtml='<span style="font-size:11px;color:#e74c3c">Not logged</span>';
+      if(a.id!==curUser.id){
+        btnHtml='<button data-aid="'+esc(a.id)+'" data-aname="'+esc(a.name)+'" data-aphone="'+esc(a.phone||"")+'" data-again="0" onclick="doNudge(this)" style="padding:4px 10px;border:1px solid #f5a623;border-radius:6px;background:transparent;color:#f5a623;font-size:10px;cursor:pointer;font-weight:600">Nudge</button>';
+      }
+    }
+    h+='<div class="lr"><div class="ln">'+esc(a.name)+'</div><div style="display:flex;align-items:center;gap:8px">'+statHtml+btnHtml+'</div></div>';
   });
+  el.innerHTML=h||'<div class="emp">No associates.</div>';
 }
 
-function getNudges(){
-  var raw=localStorage.getItem("cia500_nudges");
-  return raw?JSON.parse(raw):{};
-}
-
-function saveNudge(associateId,byName){
-  var nudges=getNudges();
-  var today=todayStr();
-  if(!nudges[today])nudges[today]={};
-  var now=new Date();
-  var time=now.getHours()+":"+pad(now.getMinutes());
-  nudges[today][associateId]={by:byName,time:time};
-  // Clean up old dates (keep last 7 days only)
-  Object.keys(nudges).forEach(function(d){
-    if(d<addDays(today,-7))delete nudges[d];
-  });
-  localStorage.setItem("cia500_nudges",JSON.stringify(nudges));
-}
-
-function sendNudge(id,name,phone,alreadyNudged){
-  if(alreadyNudged){
-    if(!confirm(name+" was already nudged today. Send again?"))return;
-  }
-  var msg="Hi "+name+", just a reminder to log your activities for today on CIA500! 💪";
-  var encoded=encodeURIComponent(msg);
-  var url;
-  if(phone){
-    // Clean phone — remove spaces, dashes, +
-    var cleanPhone=phone.replace(/[\s\-\+]/g,"");
-    url="https://wa.me/"+cleanPhone+"?text="+encoded;
-  } else {
-    // No phone saved — open WhatsApp without number
-    url="https://wa.me/?text="+encoded;
-    alert("No WhatsApp number saved for "+name+". Go to Admin → Associates to add their number. Opening WhatsApp — you can paste or search manually.");
-  }
-  saveNudge(id,curAssociate.name);
+function doNudge(btn){
+  var id=btn.dataset.aid,name=btn.dataset.aname,phone=btn.dataset.aphone,again=btn.dataset.again==="1";
+  if(again&&!confirm(name+" already nudged. Send again?"))return;
+  var msg="Hi "+name+", just a reminder to log your activities for today on CIA500!";
+  var url=phone?"https://wa.me/"+phone.replace(/[^0-9]/g,"")+"?text="+encodeURIComponent(msg):"https://wa.me/?text="+encodeURIComponent(msg);
+  if(!phone)alert("No phone for "+name+". Add in Admin tab.");
+  saveNudge(id,curUser.name);
   window.open(url,"_blank");
-  // Re-render to show nudged status
-  setTimeout(function(){renderDashboard();},500);
+  setTimeout(function(){renderDash();},600);
 }
 
-// ── MY DATA ───────────────────────────────────────────────────────────────────
-function renderMyData(){
-  document.getElementById("content").innerHTML='<div class="loading">Loading…</div>';
+// MY DATA
+function renderMine(){
+  document.getElementById("content").innerHTML='<div class="ld">Loading...</div>';
   Promise.all([
-    api("GET","sales","","select=*&associate_id=eq."+curAssociate.id+"&order=sale_date.desc"),
-    api("GET","activities","","select=*&associate_id=eq."+curAssociate.id+"&order=activity_date.desc&limit=100"),
-    api("GET","associates","","select=*&id=eq."+curAssociate.id)
+    api("GET","sales","","select=*&associate_id=eq."+curUser.id+"&order=sale_date.desc"),
+    api("GET","activities","","select=*&associate_id=eq."+curUser.id+"&order=activity_date.desc&limit=100"),
+    api("GET","associates","","select=*&id=eq."+curUser.id)
   ]).then(function(res){
     var sales=res[0]||[],acts=res[1]||[],me=(res[2]||[])[0]||{};
-    var totalFyc=sales.reduce(function(a,s){return a+(s.commission||0);},0);
-    var totalPts=acts.reduce(function(a,r){return a+(r.points||0);},0);
-    var goalPct=me.target>0?Math.min(100,Math.round(totalFyc/me.target*100)):0;
-
-    var html='<div class="stat-grid">'
-      +'<div class="stat-box"><div class="stat-label">My FYC</div><div class="stat-val gold">'+fmtMoney(totalFyc)+'</div></div>'
-      +'<div class="stat-box"><div class="stat-label">Target</div><div class="stat-val">'+fmtMoney(me.target||0)+'</div></div>'
-      +'<div class="stat-box"><div class="stat-label">Achieved</div><div class="stat-val">'+goalPct+'%</div></div>'
-      +'</div>';
-    html+='<div style="padding:0 12px 10px"><div class="bar-wrap" style="height:10px"><div class="bar-fill" style="width:'+goalPct+'%"></div></div>'
-      +'<div style="font-size:10px;color:#444;margin-top:3px">'+fmtMoney(totalFyc)+' of '+fmtMoney(me.target||0)+' annual target</div></div>';
-    html+='<div class="stat-grid">'
-      +'<div class="stat-box"><div class="stat-label">Total Pts</div><div class="stat-val">'+totalPts+'</div></div>'
-      +'<div class="stat-box"><div class="stat-label">Sales</div><div class="stat-val">'+sales.length+'</div></div>'
-      +'<div class="stat-box"><div class="stat-label">Activities</div><div class="stat-val">'+acts.length+'</div></div>'
-      +'</div>';
-
-    html+='<div class="section-label">My Sales</div><div class="card">';
-    if(sales.length){
-      sales.forEach(function(s){
-        html+='<div class="act-row"><div style="flex:1"><div class="act-type">'+esc(s.pdt)+' · '+esc(s.pdt_type)+'</div>'
-          +'<div class="act-date">'+fmtMoney(s.premium)+' · '+s.tenure+'yr · '+fmtDate(s.sale_date)+'</div></div>'
-          +'<span class="act-pts">'+fmtMoney(s.commission)+'</span></div>';
-      });
-    }else{html+='<div class="empty">No sales yet.</div>';}
-    html+='</div>';
-
-    html+='<div class="section-label">Activity Summary</div><div class="card">';
-    if(acts.length){
-      var byType={};
-      acts.forEach(function(a){byType[a.activity_type]=(byType[a.activity_type]||0)+1;});
-      Object.keys(byType).sort().forEach(function(t){
-        html+='<div class="list-row"><span class="list-name">'+esc(t)+'</span><span class="list-val">×'+byType[t]+'</span></div>';
-      });
-    }else{html+='<div class="empty">No activities yet.</div>';}
-    html+='</div><div style="height:20px"></div>';
-    document.getElementById("content").innerHTML=html;
+    var totF=sales.reduce(function(a,s){return a+(s.commission||0);},0);
+    var totP=acts.reduce(function(a,r){return a+(r.points||0);},0);
+    var gp=me.target>0?Math.min(100,Math.round(totF/me.target*100)):0;
+    var h='<div class="sg"><div class="sb"><div class="sl">My FYC</div><div class="sv g">'+fmtM(totF)+'</div></div>'
+      +'<div class="sb"><div class="sl">Target</div><div class="sv">'+fmtM(me.target||0)+'</div></div>'
+      +'<div class="sb"><div class="sl">Achieved</div><div class="sv">'+gp+'%</div></div></div>';
+    h+='<div style="padding:0 12px 10px"><div class="bw" style="height:10px"><div class="bf" style="width:'+gp+'%"></div></div>'
+      +'<div style="font-size:10px;color:#444;margin-top:3px">'+fmtM(totF)+' of '+fmtM(me.target||0)+'</div></div>';
+    h+='<div class="sg"><div class="sb"><div class="sl">Pts</div><div class="sv">'+totP+'</div></div>'
+      +'<div class="sb"><div class="sl">Sales</div><div class="sv">'+sales.length+'</div></div>'
+      +'<div class="sb"><div class="sl">Acts</div><div class="sv">'+acts.length+'</div></div></div>';
+    h+='<div class="sec-lbl">Sales</div><div class="card">';
+    if(sales.length){sales.forEach(function(s){h+='<div class="ar"><div style="flex:1"><div class="at">'+esc(s.pdt)+' - '+esc(s.pdt_type)+'</div><div class="ad">'+fmtM(s.premium)+' - '+s.tenure+'yr - '+fmtD(s.sale_date)+'</div></div><span class="ap">'+fmtM(s.commission)+'</span></div>';});}
+    else h+='<div class="emp">No sales.</div>';
+    h+='</div><div class="sec-lbl">Activity Summary</div><div class="card">';
+    if(acts.length){var bt={};acts.forEach(function(a){bt[a.activity_type]=(bt[a.activity_type]||0)+1;});Object.keys(bt).sort().forEach(function(t){h+='<div class="lr"><span class="ln">'+esc(t)+'</span><span class="lv">x'+bt[t]+'</span></div>';});}
+    else h+='<div class="emp">No activities.</div>';
+    h+='</div><div style="height:20px"></div>';
+    document.getElementById("content").innerHTML=h;
   });
 }
 
-// ── ADMIN ─────────────────────────────────────────────────────────────────────
-function loadAdminAssociates(){
-  api("GET","associates","","order=name.asc&select=id,name,target,phone,active").then(function(rows){
-    var el=document.getElementById("admin-assoc-list");if(!el)return;
-    if(!rows||!rows.length){el.innerHTML='<div class="empty">No associates found.</div>';return;}
-    var html="";
-    // Split active and inactive
-    var active=rows.filter(function(a){return a.active!==false;});
-    var inactive=rows.filter(function(a){return a.active===false;});
-
-    function renderAssocRow(a,isActive){
-      return '<div class="admin-row" style="flex-wrap:wrap;gap:6px;padding:10px 12px;'+(isActive?'':'opacity:0.5')+'">'
-        +'<div style="flex:1;min-width:100px">'
-        +'<div style="font-size:12px;font-weight:500;color:'+(isActive?'#f0f0ee':'#666')+'">'+esc(a.name)+(isActive?'':' <span style="font-size:9px;color:#555">(inactive)</span>')+'</div>'
-        +'<div style="font-size:10px;color:#555">'+esc(a.id)+'</div>'
-        +'</div>'
-        +(isActive
-          ?'<div style="display:flex;flex-direction:column;gap:4px;min-width:140px">'
-          +'<div style="display:flex;align-items:center;gap:6px"><span style="font-size:10px;color:#555;min-width:44px">Target</span>'
-          +'<input type="number" value="'+(a.target||0)+'" data-aid="'+a.id+'" data-field="target" onchange="updateAssociate(this)" style="flex:1;padding:4px 6px;border-radius:6px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:11px;outline:none"/></div>'
-          +'<div style="display:flex;align-items:center;gap:6px"><span style="font-size:10px;color:#555;min-width:44px">Phone</span>'
-          +'<input value="'+esc(a.phone||"")+'" data-aid="'+a.id+'" data-field="phone" onchange="updateAssociate(this)" placeholder="6591234567" style="flex:1;padding:4px 6px;border-radius:6px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:11px;outline:none"/></div>'
-          +'</div>'
-          +'<button onclick="delAssociate(''+a.id+'',''+esc(a.name)+'')" style="padding:4px 8px;border:1px solid #3a1a1a;border-radius:6px;background:transparent;color:#e74c3c;font-size:10px;cursor:pointer;align-self:center">Deactivate</button>'
-          :'<button onclick="reactivateAssociate(''+a.id+'',''+esc(a.name)+'')" style="padding:4px 8px;border:1px solid #1a3a1a;border-radius:6px;background:transparent;color:#4caf50;font-size:10px;cursor:pointer;align-self:center">Reactivate</button>'
-        )
-        +'</div>';
-    }
-
-    active.forEach(function(a){html+=renderAssocRow(a,true);});
-    if(inactive.length){
-      html+='<div style="padding:6px 12px;font-size:9px;color:#444;text-transform:uppercase;letter-spacing:0.07em;border-top:1px solid #1a1a1a">Inactive</div>';
-      inactive.forEach(function(a){html+=renderAssocRow(a,false);});
-    }
-    el.innerHTML=html;
-  });
-}
-
-function updateAssociate(el){
-  var id=el.dataset.aid,field=el.dataset.field;
-  var val=field==="target"?parseFloat(el.value)||0:el.value;
-  var body={};body[field]=val;
-  fetch(SUPA_URL+"/rest/v1/associates?id=eq."+id,{
-    method:"PATCH",
-    headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+SUPA_KEY,"Content-Type":"application/json","Prefer":"return=minimal"},
-    body:JSON.stringify(body)
-  }).then(function(){showAssocMsg("✓ Updated");});
-}
-
-function addAssociate(){
-  var name=(document.getElementById("new-assoc-name").value||"").trim();
-  var target=parseFloat(document.getElementById("new-assoc-target").value)||0;
-  var phone=(document.getElementById("new-assoc-phone").value||"").trim();
-  var msg=document.getElementById("assoc-msg");
-  if(!name){msg.innerHTML='<div class="msg err">Enter a name.</div>';return;}
-  // Generate next ID
-  api("GET","associates","","select=id&order=id.desc&limit=1").then(function(rows){
-    var lastId=(rows&&rows[0]&&rows[0].id)||"ID000";
-    var num=parseInt(lastId.replace("ID",""))+1;
-    var newId="ID"+String(num).padStart(3,"0");
-    api("POST","associates",{id:newId,name:name,target:target,phone:phone||null}).then(function(r){
-      if(r&&r[0]&&r[0].id){
-        msg.innerHTML='<div class="msg">✓ '+esc(name)+' added as '+newId+'</div>';
-        document.getElementById("new-assoc-name").value="";
-        document.getElementById("new-assoc-target").value="";
-        document.getElementById("new-assoc-phone").value="";
-        loadAdminAssociates();
-        setTimeout(function(){msg.innerHTML="";},2500);
-      }else{msg.innerHTML='<div class="msg err">Error adding. Try again.</div>';}
-    });
-  });
-}
-
-function delAssociate(id,name){
-  if(!confirm("Deactivate "+name+"? They will be hidden from the app but their historical data is preserved."))return;
-  fetch(SUPA_URL+"/rest/v1/associates?id=eq."+id,{
-    method:"PATCH",
-    headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+SUPA_KEY,"Content-Type":"application/json","Prefer":"return=minimal"},
-    body:JSON.stringify({active:false})
-  }).then(function(){loadAdminAssociates();showAssocMsg("✓ "+name+" deactivated");});
-}
-
-function reactivateAssociate(id,name){
-  fetch(SUPA_URL+"/rest/v1/associates?id=eq."+id,{
-    method:"PATCH",
-    headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+SUPA_KEY,"Content-Type":"application/json","Prefer":"return=minimal"},
-    body:JSON.stringify({active:true})
-  }).then(function(){loadAdminAssociates();showAssocMsg("✓ "+name+" reactivated");});
-}
-
-function showAssocMsg(txt){
-  var el=document.getElementById("assoc-msg");
-  if(el){el.innerHTML='<div class="msg">'+txt+'</div>';setTimeout(function(){if(el)el.innerHTML="";},1500);}
-}
-
+// ADMIN
 function renderAdmin(){
-  var html='<div style="padding:10px 12px 4px"><div style="font-size:11px;color:#666;line-height:1.6">Manage associates, activity points, products and commission rates.</div></div>';
-
-  // Associates management
-  html+='<div class="section-label">Associates</div><div class="card" id="admin-assoc-list"><div class="loading">Loading…</div></div>';
-  html+='<div class="card" style="margin:6px 12px">';
-  html+='<div class="card-head"><div class="card-title">Add New Associate</div></div>';
-  html+='<div class="form-group"><div class="form-label">Name</div><input class="form-input" id="new-assoc-name" placeholder="Full name"/></div>';
-  html+='<div class="form-group"><div class="form-label">Annual FYC Target ($)</div><input type="number" class="form-input" id="new-assoc-target" placeholder="e.g. 50000"/></div>';
-  html+='<div class="form-group"><div class="form-label">WhatsApp (with country code)</div><input class="form-input" id="new-assoc-phone" placeholder="e.g. 6591234567"/></div>';
-  html+='</div>';
-  html+='<button class="submit-btn" onclick="addAssociate()">+ Add Associate</button>';
-  html+='<div id="assoc-msg"></div>';
-
-  // Activities
-  html+='<div class="section-label">Activity Points</div><div class="card" id="admin-acts">';
-  var acts=getActivities();
-  acts.forEach(function(a,i){
-    html+='<div class="admin-row"><span class="admin-tag" style="min-width:120px;font-size:11px;color:#888">'+esc(a.type)+'</span>'
-      +'<input type="number" value="'+a.pts+'" data-ai="'+i+'" onchange="updateActPts(this)" style="max-width:70px"/><span style="font-size:10px;color:#444">pts</span></div>';
-  });
-  html+='</div>';
-
-  // Commission rates
-  html+='<div class="section-label">Commission Rates (Year 1 %)</div><div class="card">';
+  var h='<div style="padding:10px 12px 4px;font-size:11px;color:#666">Manage associates, rates and activities.</div>';
+  h+='<div class="sec-lbl">Associates</div><div class="card" id="assoc-list"><div class="ld">Loading...</div></div>';
+  h+='<div class="card" style="margin:6px 12px"><div class="card-head"><div class="card-title">Add Associate</div></div>';
+  h+='<div class="fg"><div class="fl">Name</div><input class="fi" id="new-name" placeholder="Full name"/></div>';
+  h+='<div class="fg"><div class="fl">Annual Target ($)</div><input type="number" class="fi" id="new-target" placeholder="50000"/></div>';
+  h+='<div class="fg"><div class="fl">WhatsApp (with country code)</div><input class="fi" id="new-phone" placeholder="6591234567"/></div></div>';
+  h+='<button class="btn" onclick="addAssoc()">+ Add Associate</button><div id="assoc-msg"></div>';
+  h+='<div class="sec-lbl">Commission Rates (Year 1 %)</div><div class="card">';
   var rates=getRates();
   Object.keys(rates).sort().forEach(function(pdt){
     var r=rates[pdt];
     if(r.flat!==undefined){
-      html+='<div class="admin-row"><span class="admin-tag" style="min-width:130px;font-size:11px;color:#888">'+esc(pdt)+'</span>'
-        +'<input type="number" step="0.01" value="'+r.flat+'" data-pdt="'+esc(pdt)+'" data-type="flat" onchange="updateRate(this)" style="max-width:70px"/><span style="font-size:10px;color:#444">%'+(r.gst?' · GST':'')+'</span></div>';
-    } else if(r.table){
-      html+='<div style="padding:6px 12px 2px;border-bottom:1px solid #1a1a1a"><span style="font-size:10px;color:#666">'+esc(pdt)+' (tenure-based)</span></div>';
-      Object.keys(r.table).sort(function(a,b){return a-b;}).forEach(function(tenure){
-        html+='<div class="admin-row" style="padding:4px 12px"><span style="font-size:10px;color:#555;min-width:60px">'+tenure+'yr</span>'
-          +'<input type="number" step="0.01" value="'+r.table[tenure]+'" data-pdt="'+esc(pdt)+'" data-tenure="'+tenure+'" data-type="table" onchange="updateRate(this)" style="max-width:70px"/><span style="font-size:10px;color:#444">%</span></div>';
-      });
+      h+='<div class="adrow"><span style="font-size:11px;color:#666;min-width:120px">'+esc(pdt)+(r.gst?' (GST)':'')+'</span>'
+        +'<input type="number" step="0.01" value="'+r.flat+'" data-pdt="'+esc(pdt)+'" data-type="flat" onchange="updRate(this)"/><span style="font-size:10px;color:#444">%</span></div>';
     }
   });
-  html+='</div>';
-
-  html+='<button class="submit-btn sec" onclick="addProduct()">+ Add product/rate</button>';
-  html+='<button class="submit-btn red" onclick="resetDefaults()">Reset all to defaults</button>';
-  html+='<div id="admin-msg"></div><div style="height:30px"></div>';
-  document.getElementById("content").innerHTML=html;
-  loadAdminAssociates();
+  h+='</div><button class="btn sec" onclick="addPdt()">+ Add Product/Rate</button>';
+  h+='<button class="btn red" onclick="resetAll()">Reset to Defaults</button>';
+  h+='<div id="admin-msg"></div><div style="height:30px"></div>';
+  document.getElementById("content").innerHTML=h;
+  loadAdminAssocs();
 }
 
-function updateActPts(el){
-  var acts=getActivities();
-  acts[parseInt(el.dataset.ai)].pts=parseInt(el.value)||0;
-  localStorage.setItem("cia500_activities",JSON.stringify(acts));
-  showAdminMsg("✓ Saved");
+function loadAdminAssocs(){
+  api("GET","associates","","order=name.asc&select=id,name,target,phone,active").then(function(rows){
+    var el=document.getElementById("assoc-list");if(!el)return;
+    if(!rows||!rows.length){el.innerHTML='<div class="emp">No associates.</div>';return;}
+    var active=(rows||[]).filter(function(a){return a.active!==false;});
+    var inactive=(rows||[]).filter(function(a){return a.active===false;});
+    var h="";
+    function row(a,isActive){
+      return '<div class="adrow" style="flex-wrap:wrap;gap:6px;padding:10px 12px;'+(isActive?"":"opacity:0.5")+'">'
+        +'<div style="flex:1;min-width:80px"><div style="font-size:12px;font-weight:500;color:'+(isActive?"#f0f0ee":"#666")+'">'+esc(a.name)+'</div><div style="font-size:10px;color:#555">'+esc(a.id)+'</div></div>'
+        +(isActive
+          ?'<div style="display:flex;flex-direction:column;gap:3px;min-width:130px">'
+          +'<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:#555;min-width:40px">Target</span>'
+          +'<input type="number" value="'+(a.target||0)+'" data-aid="'+a.id+'" data-f="target" onchange="updAssoc(this)" style="flex:1;padding:4px;border-radius:5px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:11px;outline:none"/></div>'
+          +'<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:#555;min-width:40px">Phone</span>'
+          +'<input value="'+esc(a.phone||"")+'" data-aid="'+a.id+'" data-f="phone" onchange="updAssoc(this)" placeholder="6591234567" style="flex:1;padding:4px;border-radius:5px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:11px;outline:none"/></div>'
+          +'</div>'
+          +'<button onclick="deactivateAssoc(\''+a.id+'\',\''+esc(a.name)+'\')" style="padding:4px 8px;border:1px solid #3a1a1a;border-radius:6px;background:transparent;color:#e74c3c;font-size:10px;cursor:pointer">Deactivate</button>'
+          :'<button onclick="reactivateAssoc(\''+a.id+'\',\''+esc(a.name)+'\')" style="padding:4px 8px;border:1px solid #1a3a1a;border-radius:6px;background:transparent;color:#4caf50;font-size:10px;cursor:pointer">Reactivate</button>'
+        )+'</div>';
+    }
+    active.forEach(function(a){h+=row(a,true);});
+    if(inactive.length){h+='<div style="padding:6px 12px;font-size:9px;color:#444;text-transform:uppercase;border-top:1px solid #1a1a1a">Inactive</div>';inactive.forEach(function(a){h+=row(a,false);});}
+    el.innerHTML=h;
+  });
 }
-function updateRate(el){
-  var rates=getRates();
-  var pdt=el.dataset.pdt;
+
+function updAssoc(el){
+  var body={};body[el.dataset.f]=el.dataset.f==="target"?parseFloat(el.value)||0:el.value;
+  patch("associates","id=eq."+el.dataset.aid,body).then(function(){showAdminMsg("Saved");});
+}
+function addAssoc(){
+  var name=(document.getElementById("new-name").value||"").trim();
+  var target=parseFloat(document.getElementById("new-target").value)||0;
+  var phone=(document.getElementById("new-phone").value||"").trim();
+  var msg=document.getElementById("assoc-msg");
+  if(!name){msg.innerHTML='<div class="ms er">Enter a name.</div>';return;}
+  api("GET","associates","","select=id&order=id.desc&limit=1").then(function(rows){
+    var last=(rows&&rows[0]&&rows[0].id)||"ID000";
+    var num=parseInt(last.replace("ID",""))+1;
+    var nid="ID"+String(num).padStart(3,"0");
+    api("POST","associates",{id:nid,name:name,target:target,phone:phone||null,active:true}).then(function(r){
+      if(r&&r[0]&&r[0].id){
+        msg.innerHTML='<div class="ms">'+esc(name)+' added as '+nid+'</div>';
+        document.getElementById("new-name").value="";document.getElementById("new-target").value="";document.getElementById("new-phone").value="";
+        loadAdminAssocs();setTimeout(function(){msg.innerHTML="";},2500);
+      }else msg.innerHTML='<div class="ms er">Error. Try again.</div>';
+    });
+  });
+}
+function deactivateAssoc(id,name){
+  if(!confirm("Deactivate "+name+"? Historical data preserved."))return;
+  patch("associates","id=eq."+id,{active:false}).then(function(){loadAdminAssocs();showAdminMsg("Deactivated");});
+}
+function reactivateAssoc(id,name){
+  patch("associates","id=eq."+id,{active:true}).then(function(){loadAdminAssocs();showAdminMsg("Reactivated");});
+}
+function updRate(el){
+  var rates=getRates(),pdt=el.dataset.pdt;
   if(!rates[pdt])rates[pdt]={};
-  if(el.dataset.type==="flat"){rates[pdt].flat=parseFloat(el.value)||0;}
-  else if(el.dataset.type==="table"){
-    if(!rates[pdt].table)rates[pdt].table={};
-    rates[pdt].table[el.dataset.tenure]=parseFloat(el.value)||0;
-  }
-  localStorage.setItem("cia500_rates",JSON.stringify(rates));
-  showAdminMsg("✓ Saved");
+  rates[pdt].flat=parseFloat(el.value)||0;
+  localStorage.setItem("c5_rates",JSON.stringify(rates));
+  showAdminMsg("Rate saved");
 }
-function addProduct(){
-  var pdt=prompt("Enter product code (e.g. NEWPDT):");
-  if(!pdt)return;
-  var rate=prompt("Enter Year 1 commission rate % (e.g. 30):");
-  if(!rate)return;
-  var gstStr=prompt("Does this product have 9% GST embedded? (yes/no):","no");
-  var rates=getRates();
-  rates[pdt.toUpperCase()]={flat:parseFloat(rate)||0,gst:gstStr&&gstStr.toLowerCase()==="yes"};
-  localStorage.setItem("cia500_rates",JSON.stringify(rates));
-  // Add to products list — prompt for category
-  var products=getProducts();
-  var cats=Object.keys(products).join(", ");
-  var cat=prompt("Add to which category? ("+cats+"):");
-  if(cat&&products[cat]){
-    products[cat].push(pdt.toUpperCase());
-    localStorage.setItem("cia500_products",JSON.stringify(products));
-  }
-  showAdminMsg("✓ "+pdt.toUpperCase()+" added");
-  renderAdmin();
+function addPdt(){
+  var pdt=prompt("Product code (e.g. NEWPDT):");if(!pdt)return;
+  var rate=prompt("Year 1 rate %:");if(!rate)return;
+  var gstAns=prompt("Has 9% GST in premium? yes/no:","no");
+  var prods=getProds(),rates=getRates();
+  rates[pdt.toUpperCase()]={flat:parseFloat(rate)||0,gst:(gstAns||"").toLowerCase()==="yes"};
+  localStorage.setItem("c5_rates",JSON.stringify(rates));
+  var cats=Object.keys(prods).join(", ");
+  var cat=prompt("Add to category ("+cats+"):");
+  if(cat&&prods[cat]){prods[cat].push(pdt.toUpperCase());localStorage.setItem("c5_prods",JSON.stringify(prods));}
+  showAdminMsg(pdt.toUpperCase()+" added");renderAdmin();
 }
-function resetDefaults(){
-  if(!confirm("Reset ALL custom changes to defaults? This cannot be undone."))return;
-  localStorage.removeItem("cia500_activities");
-  localStorage.removeItem("cia500_products");
-  localStorage.removeItem("cia500_rates");
-  showAdminMsg("✓ Reset to defaults");
-  renderAdmin();
+function resetAll(){
+  if(!confirm("Reset all custom changes?"))return;
+  localStorage.removeItem("c5_acts");localStorage.removeItem("c5_prods");localStorage.removeItem("c5_rates");
+  showAdminMsg("Reset done");renderAdmin();
 }
 function showAdminMsg(txt){
   var el=document.getElementById("admin-msg");
-  if(el){el.innerHTML='<div class="msg">'+txt+'</div>';setTimeout(function(){if(el)el.innerHTML="";},1500);}
-}
-
-var ADMIN_UNLOCKED=false;
-function unlockAdmin(){
-  if(ADMIN_UNLOCKED){
-    // lock it again
-    ADMIN_UNLOCKED=false;
-    document.getElementById("admin-tab").style.display="none";
-    document.getElementById("admin-lock").textContent="🔒";
-    if(curTab==="admin"){switchTab("log");}
-    return;
-  }
-  var pin=prompt("Enter admin PIN:");
-  if(!pin)return;
-  if(pin==="44931"){
-    ADMIN_UNLOCKED=true;
-    document.getElementById("admin-tab").style.display="";
-    document.getElementById("admin-lock").textContent="🔓";
-  } else {
-    alert("Incorrect PIN.");
-  }
+  if(el){el.innerHTML='<div class="ms">'+txt+'</div>';setTimeout(function(){if(el)el.innerHTML="";},1500);}
 }
 
 loadAssociates();
