@@ -504,9 +504,73 @@ function renderDashboard(){
         +'<div><div class="list-val">'+(pts[a.id]||0)+' pts</div>'
         +'<div class="list-sub">Today: '+(ptsTdy[a.id]||0)+'</div></div></div>';
     });
+    // Nudge section
+    html+='<div class="section-label">Today's Nudge Status</div><div class="card">';
+    var nudges=getNudges();
+    var today2=todayStr();
+    assocs.forEach(function(a){
+      var hasLogged=ptsTdy[a.id]>0;
+      var nudge=nudges[today2]&&nudges[today2][a.id];
+      var status,btnHtml="";
+      if(hasLogged){
+        status='<span style="font-size:11px;color:#4caf50;font-weight:600">✓ Logged</span>';
+      } else if(nudge){
+        status='<span style="font-size:11px;color:#f5a623">⚠ Nudged by '+esc(nudge.by)+' at '+nudge.time+'</span>';
+        btnHtml='<button onclick="sendNudge(''+a.id+'',''+esc(a.name)+'',''+esc(a.phone||"")+'',true)" style="padding:4px 8px;border:1px solid #333;border-radius:6px;background:transparent;color:#555;font-size:10px;cursor:pointer">Nudge again</button>';
+      } else {
+        status='<span style="font-size:11px;color:#e74c3c">✗ Not logged</span>';
+        if(a.id!==curAssociate.id){
+          btnHtml='<button onclick="sendNudge(''+a.id+'',''+esc(a.name)+'',''+esc(a.phone||"")+'',false)" style="padding:4px 10px;border:1px solid #f5a623;border-radius:6px;background:transparent;color:#f5a623;font-size:10px;cursor:pointer;font-weight:600">Nudge 💬</button>';
+        }
+      }
+      html+='<div class="list-row"><div class="list-name">'+esc(a.name)+'</div>'
+        +'<div style="display:flex;align-items:center;gap:8px">'+status+btnHtml+'</div></div>';
+    });
     html+='</div><div style="height:20px"></div>';
+
     document.getElementById("content").innerHTML=html;
   });
+}
+
+function getNudges(){
+  var raw=localStorage.getItem("cia500_nudges");
+  return raw?JSON.parse(raw):{};
+}
+
+function saveNudge(associateId,byName){
+  var nudges=getNudges();
+  var today=todayStr();
+  if(!nudges[today])nudges[today]={};
+  var now=new Date();
+  var time=now.getHours()+":"+pad(now.getMinutes());
+  nudges[today][associateId]={by:byName,time:time};
+  // Clean up old dates (keep last 7 days only)
+  Object.keys(nudges).forEach(function(d){
+    if(d<addDays(today,-7))delete nudges[d];
+  });
+  localStorage.setItem("cia500_nudges",JSON.stringify(nudges));
+}
+
+function sendNudge(id,name,phone,alreadyNudged){
+  if(alreadyNudged){
+    if(!confirm(name+" was already nudged today. Send again?"))return;
+  }
+  var msg="Hi "+name+", just a reminder to log your activities for today on CIA500! 💪";
+  var encoded=encodeURIComponent(msg);
+  var url;
+  if(phone){
+    // Clean phone — remove spaces, dashes, +
+    var cleanPhone=phone.replace(/[\s\-\+]/g,"");
+    url="https://wa.me/"+cleanPhone+"?text="+encoded;
+  } else {
+    // No phone saved — open WhatsApp without number
+    url="https://wa.me/?text="+encoded;
+    alert("No WhatsApp number saved for "+name+". Go to Admin → Associates to add their number. Opening WhatsApp — you can paste or search manually.");
+  }
+  saveNudge(id,curAssociate.name);
+  window.open(url,"_blank");
+  // Re-render to show nudged status
+  setTimeout(function(){renderDashboard();},500);
 }
 
 // ── MY DATA ───────────────────────────────────────────────────────────────────
