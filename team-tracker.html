@@ -485,8 +485,17 @@ function renderAdmin(){
   Object.keys(rates).sort().forEach(function(pdt){
     var r=rates[pdt];
     if(r.flat!==undefined){
-      h+='<div class="adrow"><span style="font-size:17px;color:#aaa;min-width:120px">'+esc(pdt)+(r.gst?' (GST)':'')+'</span>'
-        +'<input type="number" step="0.01" value="'+r.flat+'" data-pdt="'+esc(pdt)+'" data-type="flat" onchange="updRate(this)"/><span style="font-size:16px;color:#888">%</span></div>';
+      h+='<div class="adrow"><span style="font-size:15px;color:#aaa;min-width:130px">'+esc(pdt)+(r.gst?' (GST)':'')+'</span>'
+        +'<input type="number" step="0.01" value="'+r.flat+'" data-pdt="'+esc(pdt)+'" data-type="flat" onchange="updRate(this)"/><span style="font-size:15px;color:#888">%</span></div>';
+    } else if(r.table){
+      h+='<div style="padding:8px 12px;border-bottom:1px solid #1a1a1a;background:#141414">'
+        +'<span style="font-size:15px;color:#f5a623">'+esc(pdt)+' — tenure based</span></div>';
+      Object.keys(r.table).sort(function(a,b){return+a-+b;}).forEach(function(ten){
+        h+='<div class="adrow" style="padding:6px 12px 6px 24px">'
+          +'<span style="font-size:14px;color:#666;min-width:60px">'+ten+' yr</span>'
+          +'<input type="number" step="0.01" value="'+r.table[ten]+'" data-pdt="'+esc(pdt)+'" data-ten="'+ten+'" onchange="updRateTable(this)"/>'
+          +'<span style="font-size:14px;color:#888">%</span></div>';
+      });
     }
   });
   h+='</div><button class="btn sec" onclick="addPdt()">+ Add Product/Rate</button>';
