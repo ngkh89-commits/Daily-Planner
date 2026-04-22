@@ -276,7 +276,7 @@ function esc(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace
 var curAssociate=null,curTab="log";
 
 function loadAssociates(){
-  api("GET","associates","","order=name.asc&select=id,name").then(function(rows){
+  api("GET","associates","","order=name.asc&select=id,name&active=neq.false").then(function(rows){
     var sel=document.getElementById("sel-associate");
     (rows||[]).forEach(function(a){
       var o=document.createElement("option");o.value=a.id;o.textContent=a.name;
@@ -458,7 +458,7 @@ function delSale(id){
 function renderDashboard(){
   document.getElementById("content").innerHTML='<div class="loading">Loading dashboard…</div>';
   Promise.all([
-    api("GET","associates","","select=id,name,target&order=name.asc"),
+    api("GET","associates","","select=id,name,target&order=name.asc&active=neq.false"),
     api("GET","sales","","select=associate_id,commission"),
     api("GET","activities","","select=associate_id,points,activity_date")
   ]).then(function(res){
@@ -515,7 +515,7 @@ function renderMyData(){
   Promise.all([
     api("GET","sales","","select=*&associate_id=eq."+curAssociate.id+"&order=sale_date.desc"),
     api("GET","activities","","select=*&associate_id=eq."+curAssociate.id+"&order=activity_date.desc&limit=100"),
-    api("GET","associates","","select=*&id=eq."+curAssociate.id)
+    api("GET","associates","","select=*&id=eq."+curAssociate.id+"&active=neq.false")
   ]).then(function(res){
     var sales=res[0]||[],acts=res[1]||[],me=(res[2]||[])[0]||{};
     var totalFyc=sales.reduce(function(a,s){return a+(s.commission||0);},0);
@@ -559,8 +559,113 @@ function renderMyData(){
 }
 
 // ── ADMIN ─────────────────────────────────────────────────────────────────────
+function loadAdminAssociates(){
+  api("GET","associates","","order=name.asc&select=id,name,target,phone,active").then(function(rows){
+    var el=document.getElementById("admin-assoc-list");if(!el)return;
+    if(!rows||!rows.length){el.innerHTML='<div class="empty">No associates found.</div>';return;}
+    var html="";
+    // Split active and inactive
+    var active=rows.filter(function(a){return a.active!==false;});
+    var inactive=rows.filter(function(a){return a.active===false;});
+
+    function renderAssocRow(a,isActive){
+      return '<div class="admin-row" style="flex-wrap:wrap;gap:6px;padding:10px 12px;'+(isActive?'':'opacity:0.5')+'">'
+        +'<div style="flex:1;min-width:100px">'
+        +'<div style="font-size:12px;font-weight:500;color:'+(isActive?'#f0f0ee':'#666')+'">'+esc(a.name)+(isActive?'':' <span style="font-size:9px;color:#555">(inactive)</span>')+'</div>'
+        +'<div style="font-size:10px;color:#555">'+esc(a.id)+'</div>'
+        +'</div>'
+        +(isActive
+          ?'<div style="display:flex;flex-direction:column;gap:4px;min-width:140px">'
+          +'<div style="display:flex;align-items:center;gap:6px"><span style="font-size:10px;color:#555;min-width:44px">Target</span>'
+          +'<input type="number" value="'+(a.target||0)+'" data-aid="'+a.id+'" data-field="target" onchange="updateAssociate(this)" style="flex:1;padding:4px 6px;border-radius:6px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:11px;outline:none"/></div>'
+          +'<div style="display:flex;align-items:center;gap:6px"><span style="font-size:10px;color:#555;min-width:44px">Phone</span>'
+          +'<input value="'+esc(a.phone||"")+'" data-aid="'+a.id+'" data-field="phone" onchange="updateAssociate(this)" placeholder="6591234567" style="flex:1;padding:4px 6px;border-radius:6px;border:1px solid #252525;background:#111;color:#f0f0ee;font-size:11px;outline:none"/></div>'
+          +'</div>'
+          +'<button onclick="delAssociate(''+a.id+'',''+esc(a.name)+'')" style="padding:4px 8px;border:1px solid #3a1a1a;border-radius:6px;background:transparent;color:#e74c3c;font-size:10px;cursor:pointer;align-self:center">Deactivate</button>'
+          :'<button onclick="reactivateAssociate(''+a.id+'',''+esc(a.name)+'')" style="padding:4px 8px;border:1px solid #1a3a1a;border-radius:6px;background:transparent;color:#4caf50;font-size:10px;cursor:pointer;align-self:center">Reactivate</button>'
+        )
+        +'</div>';
+    }
+
+    active.forEach(function(a){html+=renderAssocRow(a,true);});
+    if(inactive.length){
+      html+='<div style="padding:6px 12px;font-size:9px;color:#444;text-transform:uppercase;letter-spacing:0.07em;border-top:1px solid #1a1a1a">Inactive</div>';
+      inactive.forEach(function(a){html+=renderAssocRow(a,false);});
+    }
+    el.innerHTML=html;
+  });
+}
+
+function updateAssociate(el){
+  var id=el.dataset.aid,field=el.dataset.field;
+  var val=field==="target"?parseFloat(el.value)||0:el.value;
+  var body={};body[field]=val;
+  fetch(SUPA_URL+"/rest/v1/associates?id=eq."+id,{
+    method:"PATCH",
+    headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+SUPA_KEY,"Content-Type":"application/json","Prefer":"return=minimal"},
+    body:JSON.stringify(body)
+  }).then(function(){showAssocMsg("✓ Updated");});
+}
+
+function addAssociate(){
+  var name=(document.getElementById("new-assoc-name").value||"").trim();
+  var target=parseFloat(document.getElementById("new-assoc-target").value)||0;
+  var phone=(document.getElementById("new-assoc-phone").value||"").trim();
+  var msg=document.getElementById("assoc-msg");
+  if(!name){msg.innerHTML='<div class="msg err">Enter a name.</div>';return;}
+  // Generate next ID
+  api("GET","associates","","select=id&order=id.desc&limit=1").then(function(rows){
+    var lastId=(rows&&rows[0]&&rows[0].id)||"ID000";
+    var num=parseInt(lastId.replace("ID",""))+1;
+    var newId="ID"+String(num).padStart(3,"0");
+    api("POST","associates",{id:newId,name:name,target:target,phone:phone||null}).then(function(r){
+      if(r&&r[0]&&r[0].id){
+        msg.innerHTML='<div class="msg">✓ '+esc(name)+' added as '+newId+'</div>';
+        document.getElementById("new-assoc-name").value="";
+        document.getElementById("new-assoc-target").value="";
+        document.getElementById("new-assoc-phone").value="";
+        loadAdminAssociates();
+        setTimeout(function(){msg.innerHTML="";},2500);
+      }else{msg.innerHTML='<div class="msg err">Error adding. Try again.</div>';}
+    });
+  });
+}
+
+function delAssociate(id,name){
+  if(!confirm("Deactivate "+name+"? They will be hidden from the app but their historical data is preserved."))return;
+  fetch(SUPA_URL+"/rest/v1/associates?id=eq."+id,{
+    method:"PATCH",
+    headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+SUPA_KEY,"Content-Type":"application/json","Prefer":"return=minimal"},
+    body:JSON.stringify({active:false})
+  }).then(function(){loadAdminAssociates();showAssocMsg("✓ "+name+" deactivated");});
+}
+
+function reactivateAssociate(id,name){
+  fetch(SUPA_URL+"/rest/v1/associates?id=eq."+id,{
+    method:"PATCH",
+    headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+SUPA_KEY,"Content-Type":"application/json","Prefer":"return=minimal"},
+    body:JSON.stringify({active:true})
+  }).then(function(){loadAdminAssociates();showAssocMsg("✓ "+name+" reactivated");});
+}
+
+function showAssocMsg(txt){
+  var el=document.getElementById("assoc-msg");
+  if(el){el.innerHTML='<div class="msg">'+txt+'</div>';setTimeout(function(){if(el)el.innerHTML="";},1500);}
+}
+
 function renderAdmin(){
-  var html='<div style="padding:10px 12px 4px"><div style="font-size:11px;color:#666;line-height:1.6">Edit activity points, products, and commission rates. Changes save to this device and affect new calculations immediately. Use <b style="color:#f5a623">Reset to defaults</b> to undo all changes.</div></div>';
+  var html='<div style="padding:10px 12px 4px"><div style="font-size:11px;color:#666;line-height:1.6">Manage associates, activity points, products and commission rates.</div></div>';
+
+  // Associates management
+  html+='<div class="section-label">Associates</div><div class="card" id="admin-assoc-list"><div class="loading">Loading…</div></div>';
+  html+='<div class="card" style="margin:6px 12px">';
+  html+='<div class="card-head"><div class="card-title">Add New Associate</div></div>';
+  html+='<div class="form-group"><div class="form-label">Name</div><input class="form-input" id="new-assoc-name" placeholder="Full name"/></div>';
+  html+='<div class="form-group"><div class="form-label">Annual FYC Target ($)</div><input type="number" class="form-input" id="new-assoc-target" placeholder="e.g. 50000"/></div>';
+  html+='<div class="form-group"><div class="form-label">WhatsApp (with country code)</div><input class="form-input" id="new-assoc-phone" placeholder="e.g. 6591234567"/></div>';
+  html+='</div>';
+  html+='<button class="submit-btn" onclick="addAssociate()">+ Add Associate</button>';
+  html+='<div id="assoc-msg"></div>';
 
   // Activities
   html+='<div class="section-label">Activity Points</div><div class="card" id="admin-acts">';
@@ -593,6 +698,7 @@ function renderAdmin(){
   html+='<button class="submit-btn red" onclick="resetDefaults()">Reset all to defaults</button>';
   html+='<div id="admin-msg"></div><div style="height:30px"></div>';
   document.getElementById("content").innerHTML=html;
+  loadAdminAssociates();
 }
 
 function updateActPts(el){
