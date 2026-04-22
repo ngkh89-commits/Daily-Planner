@@ -97,14 +97,14 @@ input,textarea,button,select{font-family:inherit;-webkit-appearance:none;appeara
   <div id="header">
     <div id="topbar">
       <div id="whoami"></div>
-      <button id="logout" onclick="doLogout()">Switch</button>
+      <div style="display:flex;gap:6px"><button id="admin-lock" onclick="unlockAdmin()" style="font-size:11px;color:#444;cursor:pointer;padding:4px 8px;border:1px solid #222;border-radius:6px;background:transparent">🔒</button><button id="logout" onclick="doLogout()">Switch</button></div>
     </div>
     <div id="tabs">
       <button class="tab active" onclick="switchTab('log')">Log</button>
       <button class="tab" onclick="switchTab('sales')">Sales</button>
       <button class="tab" onclick="switchTab('dashboard')">Dashboard</button>
       <button class="tab" onclick="switchTab('mydata')">My Data</button>
-      <button class="tab" onclick="switchTab('admin')">Admin</button>
+      <button class="tab" id="admin-tab" onclick="switchTab('admin')" style="display:none">Admin</button>
     </div>
   </div>
   <div id="content"></div>
@@ -644,6 +644,27 @@ function resetDefaults(){
 function showAdminMsg(txt){
   var el=document.getElementById("admin-msg");
   if(el){el.innerHTML='<div class="msg">'+txt+'</div>';setTimeout(function(){if(el)el.innerHTML="";},1500);}
+}
+
+var ADMIN_UNLOCKED=false;
+function unlockAdmin(){
+  if(ADMIN_UNLOCKED){
+    // lock it again
+    ADMIN_UNLOCKED=false;
+    document.getElementById("admin-tab").style.display="none";
+    document.getElementById("admin-lock").textContent="🔒";
+    if(curTab==="admin"){switchTab("log");}
+    return;
+  }
+  var pin=prompt("Enter admin PIN:");
+  if(!pin)return;
+  if(pin==="44931"){
+    ADMIN_UNLOCKED=true;
+    document.getElementById("admin-tab").style.display="";
+    document.getElementById("admin-lock").textContent="🔓";
+  } else {
+    alert("Incorrect PIN.");
+  }
 }
 
 loadAssociates();
