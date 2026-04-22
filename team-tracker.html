@@ -553,6 +553,14 @@ function deactivateAssoc(id,name){
 function reactivateAssoc(id,name){
   patch("associates","id=eq."+id,{active:true}).then(function(){loadAdminAssocs();showAdminMsg("Reactivated");});
 }
+function updRateTable(el){
+  var rates=getRates(),pdt=el.dataset.pdt;
+  if(!rates[pdt])rates[pdt]={table:{}};
+  if(!rates[pdt].table)rates[pdt].table={};
+  rates[pdt].table[el.dataset.ten]=parseFloat(el.value)||0;
+  localStorage.setItem("c5_rates",JSON.stringify(rates));
+  showAdminMsg("Rate saved");
+}
 function updRate(el){
   var rates=getRates(),pdt=el.dataset.pdt;
   if(!rates[pdt])rates[pdt]={};
